@@ -1,9 +1,5 @@
 package marketplaces.backend.backendrestapi.restapi.src.system.user;
 
-import marketplaces.backend.backendrestapi.config.exceptions.ApiException;
-import marketplaces.backend.backendrestapi.config.exceptions.ApiExceptionMessage;
-import marketplaces.backend.backendrestapi.config.exceptions.ApiExceptionMessageBody;
-import marketplaces.backend.backendrestapi.config.exceptions.ApiRequestException;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -85,40 +81,4 @@ public class User {
         return new ArrayList<>();
     }
 
-    public void CheckIfValidUser() {
-
-
-        if( this.username.length() < 4)
-            throw new ApiRequestException( new ApiExceptionMessage("USER_SMALL_THEN_4",
-                    new ApiExceptionMessageBody(
-                            "le nom doit être supérieur à 4 !!",
-                            "",
-                            "The name must be bigger then 4 caracters !!")));
-        if( this.password.length() < 8)
-            throw new ApiRequestException( new ApiExceptionMessage("PASS_SMALL_THEN_8",
-                    new ApiExceptionMessageBody(
-                            "le mot de passe doit être supérieur à 8 !!",
-                            "",
-                            "The password must be bigger then 8 caracters !!")));
-        if( this.mail.equals("") || this.phone.equals("")  )
-            throw new ApiRequestException( new ApiExceptionMessage("FIELD_NULL",
-                    new ApiExceptionMessageBody(
-                            "Veuillez envoyer tous les champs !!",
-                            "",
-                            "Try to send all fields !!")));
-        if( this.mail.matches("^(.+)@(.+)$")  )
-            throw new ApiRequestException( new ApiExceptionMessage("INVALID_MAIL",
-                    new ApiExceptionMessageBody(
-                            "Adresse email non valide !!",
-                            "",
-                            "Address email not valid !!")));
-        if( this.phone.matches("^\\+\\d{8,14}$")  )
-            throw new ApiRequestException( new ApiExceptionMessage("INVALID_PHONE_NUMBER",
-                    new ApiExceptionMessageBody(
-                            "Un numéro du télephone incorrect !!",
-                            "",
-                            "The number phone in incorrect !!")));
-
-
-    }
 }
