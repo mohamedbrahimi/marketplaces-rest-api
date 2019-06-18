@@ -1,5 +1,7 @@
-package marketplaces.backend.backendrestapi.config.exceptions;
+package marketplaces.backend.backendrestapi.config.exceptions.unknown;
 
+import marketplaces.backend.backendrestapi.config.exceptions.ApiException;
+import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -9,7 +11,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @ControllerAdvice
-public class ApiExceptionHandler {
+public class ApiUnknownExceptionHandler {
     @ExceptionHandler(value = {ApiRequestException.class})
     public ResponseEntity<Object> handleApiRequestException(ApiRequestException e) {
         // 1. Create payload containing exception details

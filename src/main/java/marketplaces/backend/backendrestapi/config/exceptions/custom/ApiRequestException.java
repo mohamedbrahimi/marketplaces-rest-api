@@ -1,8 +1,10 @@
-package marketplaces.backend.backendrestapi.config.exceptions;
+package marketplaces.backend.backendrestapi.config.exceptions.custom;
+
+import marketplaces.backend.backendrestapi.config.exceptions.ApiExceptionMessage;
 
 public class ApiRequestException extends RuntimeException {
 
-    private  ApiExceptionMessage apiExceptionMessage;
+    private ApiExceptionMessage apiExceptionMessage;
     public ApiRequestException(ApiExceptionMessage apiExceptionMessage) {
         this.apiExceptionMessage = apiExceptionMessage;
     }
