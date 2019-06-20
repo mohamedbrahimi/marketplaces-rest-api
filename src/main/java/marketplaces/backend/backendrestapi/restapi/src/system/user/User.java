@@ -5,11 +5,15 @@ import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Date;
 
 @Document(collection = "users")
 public class User {
@@ -32,6 +36,8 @@ public class User {
     private int status = 1;
     private String roles;
     private String authorities;
+    @DateTimeFormat(iso = ISO.DATE_TIME)
+    private Date createdDate = new Date();
 
     protected  User(){}
 
@@ -74,11 +80,43 @@ public class User {
         return new ArrayList<>();
     }
 
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
     public List<String> getAuthoritieList(){
         if(this.authorities.length() > 0){
             return Arrays.asList(this.authorities.split(","));
         }
         return new ArrayList<>();
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    public void setAuthorities(String authorities) {
+        this.authorities = authorities;
     }
 
 }
