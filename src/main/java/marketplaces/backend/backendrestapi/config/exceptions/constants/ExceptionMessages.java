@@ -15,10 +15,28 @@ public final class ExceptionMessages {
             )
     );
 
+    public static final ApiExceptionMessage ERROR_DOCUMENT_NOT_FOUND = new ApiExceptionMessage(
+            ERROR_PEFIX.concat("DOCUMENT_NOT_FOUND"),
+            new ApiExceptionMessageBody(
+                    "Ce document n'existe pas !",
+                    "",
+                    "This document not found !"
+            )
+    );
+
+    public static final ApiExceptionMessage ERROR_OBJECT_ID_NOT_VALID = new ApiExceptionMessage(
+            ERROR_PEFIX.concat("OBJECT_ID_NOT_VALID"),
+            new ApiExceptionMessageBody(
+                    "Cet id n'est pas correct !",
+                    "",
+                    "This id is not valid !"
+            )
+    );
+
     public static final ApiExceptionMessage ERROR_USER_SMALL_THEN_4 = new ApiExceptionMessage(
             ERROR_PEFIX.concat("USER_SMALL_THEN_4"),
             new ApiExceptionMessageBody(
-                    "le nom doit être supérieur à 4 !!",
+                    "Le nom doit être supérieur à 4 !!",
                     "",
                     "The name must be bigger then 4 caracters !!"
             )
@@ -90,9 +108,9 @@ public final class ExceptionMessages {
     public static final ApiExceptionMessage ERROR_UNKNOWN_EXCEPTION = new ApiExceptionMessage(
             ERROR_PEFIX.concat("UNKNOWN_EXCEPTION"),
             new ApiExceptionMessageBody(
-                    "Essaies de passer des donnees correct !!",
+                    "Le systeme a rencontre des probleme durant le traitement de votre requete !!",
                     "",
-                    "Try to pass a correct data !!"
+                    "The system was have difficult to trait your request !!"
             )
     );
 }

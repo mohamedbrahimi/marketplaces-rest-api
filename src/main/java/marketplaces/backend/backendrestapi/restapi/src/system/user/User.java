@@ -4,10 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
@@ -19,6 +17,7 @@ import java.util.Date;
 public class User {
 
     @Id
+    @Pattern(message = "Id not valid", regexp = "/^(?=[a-f\\d]{24}$)(\\d+[a-f]|[a-f]+\\d)/i")
     private String id;
     @NotNull(message = "username must be not null !!")
     @Indexed(direction = IndexDirection.ASCENDING, unique = true)

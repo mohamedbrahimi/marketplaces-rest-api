@@ -1,28 +1,25 @@
 package marketplaces.backend.backendrestapi.restapi.src.system.user;
 
-import marketplaces.backend.backendrestapi.config.exceptions.ApiExceptionMessage;
-import marketplaces.backend.backendrestapi.config.exceptions.ApiExceptionMessageBody;
+import org.bson.types.ObjectId;
 import marketplaces.backend.backendrestapi.config.exceptions.constants.ExceptionMessages;
 import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestException;
 import marketplaces.backend.backendrestapi.config.exceptions.unknown.ApiRequestUnknownException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 @RequestMapping("/sys/users")
 public class UserController{
 
+    @Autowired
     private UserRepository userRepository;
 
-
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @GetMapping("all")
     public List<User> getUsers() {
@@ -38,7 +35,7 @@ public class UserController{
     public void insert(@RequestBody User user) {
 
         try{
-            user = (User)user;
+
             user.setPassword(this.passwordEncoder().encode(user.getPassword()));
             userRepository.insert(user);
         }catch (Exception e){
@@ -51,7 +48,16 @@ public class UserController{
 
     @PostMapping
     public  void update(@RequestBody User user){
+        try {
             userRepository.save(user);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            this.CheckIfValidUser(user);
+            this.CheckIfNewUser(user);
+            this.UnknownException();
+        }
+
     }
 
     @DeleteMapping("/{id}")
@@ -64,11 +70,13 @@ public class UserController{
 
         user = (User)user;
 
-        if( user.getUsername().length() < 4)
+        if( user.getId() != null && !user.getId().matches("/^(?=[a-f\\d]{24}$)(\\d+[a-f]|[a-f]+\\d)/i"))
+            throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
+        if( user.getUsername() == null || user.getUsername().length() < 4)
             throw new ApiRequestException(ExceptionMessages.ERROR_USER_SMALL_THEN_4);
-        if( user.getPassword().length() < 8)
+        if( user.getPassword() == null || user.getPassword().length() < 8)
             throw new ApiRequestException(ExceptionMessages.ERROR_PASS_SMALL_THEN_8);
-        if( user.getMail().equals("") || user.getPhone().equals("")  )
+        if( user.getMail() == null || user.getPhone() == null || user.getMail().equals("") || user.getPhone().equals("")  )
             throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
         if( !user.getMail().matches("^(.+)@(.+)$")  )
             throw new ApiRequestException(ExceptionMessages.ERROR_INVALID_MAIL);
@@ -79,20 +87,48 @@ public class UserController{
 
     public void CheckIfNewUser(User user) {
 
-        user = (User)user;
+        User newUser = (User)user;
+        Optional<User> optionalUser = user.getId() == null ? Optional.empty() : userRepository.findById(user.getId());
 
-        if(!userRepository.findByUsername(user.getUsername()).equals(Optional.empty())) {
+
+        if( !optionalUser.equals(Optional.empty()) ) {
+            if(!optionalUser.get().getUsername().equals(newUser.getUsername()) && !userRepository.findByUsername(newUser.getUsername()).equals(Optional.empty())) {
                 throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_USERNAME);
+            }
+
+            if( !optionalUser.get().getMail().equals(newUser.getMail()) && !userRepository.findByMail(newUser.getMail()).equals(Optional.empty())) {
+                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MAIL);
+            }
+
+            if(!optionalUser.get().getPhone().equals(newUser.getPhone()) && !userRepository.findByPhone(newUser.getPhone()).equals(Optional.empty())) {
+                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_PHONE);
+            }
+        }
+        else if(user.getId() == null)  {
+
+            if(!Optional.empty().equals(userRepository.findByUsername(newUser.getUsername()))   ) {
+                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_USERNAME);
+            }
+
+            if(!userRepository.findByMail(newUser.getMail()).equals(Optional.empty())) {
+                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MAIL);
+            }
+
+
+            if(!userRepository.findByPhone(newUser.getPhone()).equals(Optional.empty())) {
+                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_PHONE);
+            }
+        }
+        else {
+            throw new ApiRequestException(ExceptionMessages.ERROR_DOCUMENT_NOT_FOUND);
         }
 
-        if(!userRepository.findByMail(user.getMail()).equals(Optional.empty())) {
-            throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MAIL);
-        }
 
-        if(!userRepository.findByPhone(user.getPhone()).equals(Optional.empty())) {
-            throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_PHONE);
-        }
+
+
     }
+
+
 
     public void UnknownException() {
         throw new ApiRequestUnknownException(ExceptionMessages.ERROR_UNKNOWN_EXCEPTION);
