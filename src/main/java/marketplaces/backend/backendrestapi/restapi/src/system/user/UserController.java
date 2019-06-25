@@ -6,6 +6,7 @@ import marketplaces.backend.backendrestapi.config.exceptions.constants.Exception
 import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestException;
 import marketplaces.backend.backendrestapi.config.exceptions.unknown.ApiRequestUnknownException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +24,7 @@ public class UserController {
     private UserRepository userRepository;
 
 
-    @GetMapping("all")
+    @GetMapping
     public List<User> getUsers() {
         return userRepository.findAll();
     }

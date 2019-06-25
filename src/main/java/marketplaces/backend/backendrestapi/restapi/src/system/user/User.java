@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +67,7 @@ public class User {
         return status;
     }
 
+
     public String getRoles() {
         return roles;
     }
@@ -75,22 +77,26 @@ public class User {
     }
 
     public List<String> getRoleList(){
-        if(this.roles.length() > 0){
+
+        if(this.roles != null && this.roles.length() > 0){
             return Arrays.asList(this.roles.split(","));
         }
-        return new ArrayList<>();
+        return new ArrayList<String>();
+    }
+
+    public List<String> getAuthoritieList(){
+
+        if(this.authorities != null && this.authorities.length() > 0){
+            return Arrays.asList(this.authorities.split(","));
+        }
+        return new ArrayList<String>();
     }
 
     public Date getCreatedDate() {
         return createdDate;
     }
 
-    public List<String> getAuthoritieList(){
-        if(this.authorities.length() > 0){
-            return Arrays.asList(this.authorities.split(","));
-        }
-        return new ArrayList<>();
-    }
+
 
     public void setUsername(String username) {
         this.username = username;
@@ -111,7 +117,7 @@ public class User {
     public void setStatus(int status) {
         this.status = status;
     }
-
+ /*
     public void setRoles(String roles) {
         this.roles = roles;
     }
@@ -120,4 +126,6 @@ public class User {
         this.authorities = authorities;
     }
 
+
+  */
 }
