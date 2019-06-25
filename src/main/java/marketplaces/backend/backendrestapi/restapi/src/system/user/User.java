@@ -1,5 +1,7 @@
 package marketplaces.backend.backendrestapi.restapi.src.system.user;
 
+import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -17,18 +19,18 @@ import java.util.Date;
 public class User {
 
     @Id
-    @Pattern(message = "Id not valid", regexp = "/^(?=[a-f\\d]{24}$)(\\d+[a-f]|[a-f]+\\d)/i")
+    @Pattern(message = "Id not valid", regexp = GlobalConstants.REGEXP_OBJECTID)
     private String id;
     @NotNull(message = "username must be not null !!")
     @Indexed(direction = IndexDirection.ASCENDING, unique = true)
     private String username;
     @NotNull(message = "mail must be not null !!")
     @Indexed(unique = true)
-    @Pattern(message = "mail is incorrect !!", regexp = "^(.+)@(.+)$")
+    @Pattern(message = "mail is incorrect !!", regexp = GlobalConstants.REGEXP_FOR_MAIL_VALDATION)
     private String mail;
     @NotNull(message = "phone must be not null !!")
     @Indexed(unique = true)
-    @Pattern(message = "phone is incorrect !!", regexp = "^\\+\\d{8,14}$")
+    @Pattern(message = "phone is incorrect !!", regexp = GlobalConstants.REGEXP_FOR_PHONE_NATIONAL_FORMAT)
     private String phone;
     private String password;
     @Indexed(direction = IndexDirection.ASCENDING)
