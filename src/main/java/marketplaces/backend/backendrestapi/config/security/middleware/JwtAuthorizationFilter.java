@@ -1,5 +1,9 @@
 package marketplaces.backend.backendrestapi.config.security.middleware;
+
+import marketplaces.backend.backendrestapi.config.security.actors.UserPrincipal;
 import marketplaces.backend.backendrestapi.config.security.constants.SecurityConstants;
+import marketplaces.backend.backendrestapi.restapi.src.system.user.UserRepository;
+import marketplaces.backend.backendrestapi.restapi.src.system.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 
@@ -22,38 +26,44 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-
+    private UserRepository userRepository;
     private static final Logger log = LoggerFactory.getLogger(JwtAuthorizationFilter.class);
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
         super(authenticationManager);
+        this.userRepository = userRepository;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws IOException, ServletException {
-        Authentication authentication = getAuthentication(request);
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        // Read the Authorization header, where the JWT token should be
         String header = request.getHeader(SecurityConstants.TOKEN_HEADER);
 
-        if (StringUtils.isEmpty(header) || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            filterChain.doFilter(request, response);
+        // If header does not contain BEARER or is null delegate to Spring impl and exit
+        if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+            chain.doFilter(request, response);
             return;
         }
 
+        // If header is present, try grab user principal from database and perform authorization
+        Authentication authentication = getUsernamePasswordAuthentication(request);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        filterChain.doFilter(request, response);
+
+        // Continue filter execution
+        chain.doFilter(request, response);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+    private Authentication getUsernamePasswordAuthentication(HttpServletRequest request) {
         String token = request.getHeader(SecurityConstants.TOKEN_HEADER);
         if (StringUtils.isNotEmpty(token)) {
             try {
-                 byte signingKey[] = SecurityConstants.JWT_SECRET.getBytes();
+                byte signingKey[] = SecurityConstants.JWT_SECRET.getBytes();
 
-                 Jws<Claims> parsedToken = Jwts.parser()
+                Jws<Claims> parsedToken = Jwts.parser()
                         .setSigningKey(signingKey)
                         .parseClaimsJws(token.replace("Bearer ", ""));
 
@@ -83,5 +93,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         return null;
+
     }
 }
