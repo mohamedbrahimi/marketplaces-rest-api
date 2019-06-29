@@ -29,7 +29,7 @@ public class UserPrincipalDetailsService implements UserDetailsService {
 
         // return exception if username not found
 
-        User user = Optional.empty().equals(optionalUser) ? null : optionalUser.get();
+        User user = Optional.empty().equals(optionalUser) ? new User() : optionalUser.get();
         UserPrincipal userPrincipal = new UserPrincipal(user);
 
         return userPrincipal;

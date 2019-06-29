@@ -41,7 +41,7 @@ public class User {
     @DateTimeFormat(iso = ISO.DATE_TIME)
     private Date createdDate = new Date();
 
-    protected  User(){}
+    public  User(){}
 
     public String getId() {
         return id;
