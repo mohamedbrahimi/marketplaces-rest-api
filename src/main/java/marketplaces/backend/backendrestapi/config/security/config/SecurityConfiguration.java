@@ -4,7 +4,6 @@ import marketplaces.backend.backendrestapi.config.security.actors.UserPrincipalD
 import marketplaces.backend.backendrestapi.restapi.src.system.user.UserRepository;
 import marketplaces.backend.backendrestapi.config.security.middleware.JwtAuthorizationFilter;
 import marketplaces.backend.backendrestapi.config.security.middleware.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -46,6 +45,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // configure access rules
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
+                .antMatchers("/sys/users").hasAnyRole("ADMIN", "MANAGER")
                 .antMatchers("/api/public/management/*").hasRole("MANAGER")
                 .antMatchers("/api/public/admin/*").hasRole("ADMIN")
                 .anyRequest().authenticated();
