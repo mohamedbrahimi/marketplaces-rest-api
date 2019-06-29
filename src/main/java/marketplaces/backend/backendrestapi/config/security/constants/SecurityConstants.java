@@ -14,4 +14,5 @@ public final class SecurityConstants {
     public static final String TOKEN_TYPE = "JWT";
     public static final String TOKEN_ISSUER = "secure-api";
     public static final String TOKEN_AUDIENCE = "secure-app";
+    public static final int EXPIRATION_TIME = 864_000_000; // 10 days
 }
