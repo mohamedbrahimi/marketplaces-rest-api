@@ -1,9 +1,7 @@
 package marketplaces.backend.backendrestapi.config.security.middleware;
 
-import marketplaces.backend.backendrestapi.config.security.actors.UserPrincipal;
 import marketplaces.backend.backendrestapi.config.security.constants.SecurityConstants;
 import marketplaces.backend.backendrestapi.restapi.src.system.user.UserRepository;
-import marketplaces.backend.backendrestapi.restapi.src.system.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 
@@ -26,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
