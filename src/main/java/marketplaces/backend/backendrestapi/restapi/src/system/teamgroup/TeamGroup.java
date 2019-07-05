@@ -33,8 +33,6 @@ public class TeamGroup {
     private String roles;
     private String authorities;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Date createdDate = new Date();
 
     public String getId() {
         return id;
@@ -88,8 +86,5 @@ public class TeamGroup {
         return new ArrayList<String>();
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
 
 }

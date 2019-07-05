@@ -2,6 +2,7 @@ package marketplaces.backend.backendrestapi.restapi.src.system.user;
 
 import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
 
+import marketplaces.backend.backendrestapi.config.global.auditing.Auditable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Date;
 
 @Document(collection = "users")
-public class User {
+public class User extends Auditable<String> {
 
     @Id
     @Pattern(message = "Id not valid", regexp = GlobalConstants.REGEXP_OBJECTID)
@@ -38,8 +39,7 @@ public class User {
     private int status = 1;
     private String roles;
     private String authorities;
-    @DateTimeFormat(iso = ISO.DATE_TIME)
-    private Date createdDate = new Date();
+
 
     public  User(){}
 
@@ -91,11 +91,6 @@ public class User {
         }
         return new ArrayList<String>();
     }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
 
 
     public void setUsername(String username) {
