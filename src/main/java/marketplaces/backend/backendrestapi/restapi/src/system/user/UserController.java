@@ -93,6 +93,7 @@ public class UserController {
 
 
         if (!optionalUser.equals(Optional.empty())) {
+
             if (!optionalUser.get().getUsername().equals(newUser.getUsername()) && !userRepository.findByUsername(newUser.getUsername()).equals(Optional.empty())) {
                 throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_USERNAME);
             }
