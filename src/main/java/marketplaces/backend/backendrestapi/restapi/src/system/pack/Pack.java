@@ -31,8 +31,6 @@ public class Pack {
     @Indexed(direction = IndexDirection.ASCENDING)
     private int status = 1;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Date createdDate = new Date();
 
     public  Pack(){}
 
@@ -68,11 +66,5 @@ public class Pack {
         this.status = status;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
 }
