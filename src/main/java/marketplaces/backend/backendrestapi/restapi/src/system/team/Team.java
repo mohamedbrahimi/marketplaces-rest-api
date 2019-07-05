@@ -29,8 +29,6 @@ public class Team {
     @Indexed(direction = IndexDirection.ASCENDING)
     private int status = 1;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Date createdDate = new Date();
 
 
     public String getId() {
@@ -57,8 +55,5 @@ public class Team {
         this.status = status;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
 }
 
