@@ -6,6 +6,11 @@ import marketplaces.backend.backendrestapi.config.exceptions.constants.Exception
 import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestException;
 import marketplaces.backend.backendrestapi.config.exceptions.unknown.ApiRequestUnknownException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -19,12 +24,25 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @GetMapping
     public List<User> getUsers() {
+       /* Query query = new Query();
 
-        return userRepository.findAll();
+        query.with(new Sort(Sort.Direction.DESC, "count"));
+        query.fields().include("username");
+        query.fields().include("mail");
+        query.fields().include("phone");
+        query.fields().include("roles");
+        query.addCriteria(Criteria.where("status").is(1));
+
+        return mongoTemplate.find(query, User.class);
+
+        */
+
+       return userRepository.findAll();
     }
 
     @GetMapping("/{id}")
@@ -33,7 +51,7 @@ public class UserController {
         return userRepository.findById(id);
     }
 
-    @PutMapping
+    @PostMapping
     public void insert(@RequestBody User user) {
 
         try {
@@ -47,15 +65,31 @@ public class UserController {
         }
     }
 
-    @PostMapping
+    @PutMapping
     public void update(@RequestBody User user) {
         try {
-            user = this.encodePasseord(user);
-            userRepository.save(user);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+
             this.CheckIfValidUser(user);
             this.CheckIfNewUser(user);
+            user = this.encodePasseord(user);
+
+            Query query = new Query();
+            query.addCriteria(Criteria.where("id").is(user.getId()));
+            Update update = new Update();
+            if(user.getUsername() != null) update.set("username",user.getUsername());
+            if(user.getMail() != null) update.set("mail",user.getMail());
+            if(user.getPhone() != null) update.set("phone",user.getPhone());
+            if(user.getPassword() != null) update.set("password",user.getPassword());
+            if(user.getRoles() != null) update.set("roles",user.getRoles());
+            if(user.getAuthorities() != null) update.set("authorities",user.getAuthorities());
+            if(user.getStatus() == 1 && user.getStatus() == 0 ) update.set("status",user.getStatus());
+
+            mongoTemplate.upsert(query, update, User.class);
+
+           // userRepository.save(user);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+
             this.UnknownException();
         }
 
