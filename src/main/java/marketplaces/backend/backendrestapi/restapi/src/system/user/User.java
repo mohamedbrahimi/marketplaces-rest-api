@@ -7,24 +7,21 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.lang.reflect.Array;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Date;
 
 @Document(collection = "users")
 public class User extends Auditable<String> {
-
     @Id
     @Pattern(message = "Id not valid", regexp = GlobalConstants.REGEXP_OBJECTID)
     private String id;
     @NotNull(message = "username must be not null !!")
     @Indexed(direction = IndexDirection.ASCENDING, unique = true)
+    @Size(min = 4)
     private String username;
     @NotNull(message = "mail must be not null !!")
     @Indexed(unique = true)
@@ -34,6 +31,7 @@ public class User extends Auditable<String> {
     @Indexed(unique = true)
     @Pattern(message = "phone is incorrect !!", regexp = GlobalConstants.REGEXP_FOR_PHONE_NATIONAL_FORMAT)
     private String phone;
+    @Size(min = 8)
     private String password;
     @Indexed(direction = IndexDirection.ASCENDING)
     private int status = 1;
