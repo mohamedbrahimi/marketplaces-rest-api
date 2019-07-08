@@ -45,11 +45,11 @@ public abstract class Auditable<U> {
         this.lastModified = lastModified;
     }
 
-    public String getUser() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setUser(String createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
