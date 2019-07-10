@@ -67,27 +67,26 @@ public class UserController {
 
     @PutMapping
     public void update(@RequestBody User user) {
-        try {
+        user = this.encodePasseord(user);
+        this.CheckIfValidUser(user);
+        this.CheckIfNewUser(user);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(user.getId()));
+        Update update = new Update();
+        if(user.getUsername() != null) update.set("username",user.getUsername());
+        if(user.getMail() != null) update.set("mail",user.getMail());
+        if(user.getPhone() != null) update.set("phone",user.getPhone());
+        if(user.getPassword() != null) update.set("password",user.getPassword());
+        if(user.getRoles() != null) update.set("roles",user.getRoles());
+        if(user.getAuthorities() != null) update.set("authorities",user.getAuthorities());
+        if(user.getStatus() == 1 || user.getStatus() == 0 ) update.set("status",user.getStatus());
 
+        try {
+            mongoTemplate.findAndModify(query, update, User.class);
+          //  userRepository.save(user);
+        } catch (Exception e) {
             this.CheckIfValidUser(user);
             this.CheckIfNewUser(user);
-            user = this.encodePasseord(user);
-
-            Query query = new Query();
-            query.addCriteria(Criteria.where("id").is(user.getId()));
-            Update update = new Update();
-            if(user.getUsername() != null) update.set("username",user.getUsername());
-            if(user.getMail() != null) update.set("mail",user.getMail());
-            if(user.getPhone() != null) update.set("phone",user.getPhone());
-            if(user.getPassword() != null) update.set("password",user.getPassword());
-            if(user.getRoles() != null) update.set("roles",user.getRoles());
-            if(user.getAuthorities() != null) update.set("authorities",user.getAuthorities());
-            if(user.getStatus() == 1 && user.getStatus() == 0 ) update.set("status",user.getStatus());
-
-            mongoTemplate.upsert(query, update, User.class);
-
-           // userRepository.save(user);
-        } catch (Exception e) {
             System.out.println(e.getMessage());
 
             this.UnknownException();
@@ -125,17 +124,14 @@ public class UserController {
         User newUser = (User) user;
         Optional<User> optionalUser = user.getId() == null ? Optional.empty() : userRepository.findById(user.getId());
 
-
         if (!optionalUser.equals(Optional.empty())) {
 
             if (!optionalUser.get().getUsername().equals(newUser.getUsername()) && !userRepository.findByUsername(newUser.getUsername()).equals(Optional.empty())) {
                 throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_USERNAME);
             }
-
             if (!optionalUser.get().getMail().equals(newUser.getMail()) && !userRepository.findByMail(newUser.getMail()).equals(Optional.empty())) {
                 throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MAIL);
             }
-
             if (!optionalUser.get().getPhone().equals(newUser.getPhone()) && !userRepository.findByPhone(newUser.getPhone()).equals(Optional.empty())) {
                 throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_PHONE);
             }
