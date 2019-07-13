@@ -5,7 +5,9 @@ import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
 import marketplaces.backend.backendrestapi.config.exceptions.constants.ExceptionMessages;
 import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestException;
 import marketplaces.backend.backendrestapi.config.exceptions.unknown.ApiRequestUnknownException;
+import marketplaces.backend.backendrestapi.config.global.filtering.Filtering;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -23,26 +25,19 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
+    private UserService userService;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    @GetMapping
-    public List<User> getUsers() {
-       /* Query query = new Query();
 
-        query.with(new Sort(Sort.Direction.DESC, "count"));
-        query.fields().include("username");
-        query.fields().include("mail");
-        query.fields().include("phone");
-        query.fields().include("roles");
-        query.addCriteria(Criteria.where("status").is(1));
 
-        return mongoTemplate.find(query, User.class);
 
-        */
 
-       return userRepository.findAll();
+    @GetMapping("/{size}/{page}")
+    public Page<User> getUsers(@PathVariable int size, @PathVariable int page) {
+        return userService.find(new Filtering(size, page));
     }
 
     @GetMapping("/{id}")
