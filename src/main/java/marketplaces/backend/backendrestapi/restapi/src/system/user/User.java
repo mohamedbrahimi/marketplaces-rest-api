@@ -45,6 +45,10 @@ public class User extends Auditable<String> {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getUsername() {
         return username;
     }

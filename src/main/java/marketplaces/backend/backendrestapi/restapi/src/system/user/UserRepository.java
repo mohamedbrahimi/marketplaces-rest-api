@@ -11,6 +11,8 @@ public interface UserRepository extends MongoRepository<User, String>{
     Optional<User> findByMail(String mail);
     Optional<User> findByPhone(String phone);
 
+    User save(User user);
+
     @Query(value = "{}", fields = "{username:1, mail:1, id:0}", sort = "{username:1}")
     List<User> findAll();
 
