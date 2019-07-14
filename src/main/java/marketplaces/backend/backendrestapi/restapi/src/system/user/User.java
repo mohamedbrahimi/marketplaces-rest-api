@@ -16,6 +16,16 @@ import java.util.List;
 
 @Document(collection = "users")
 public class User extends Auditable<String> {
+
+    static public String USERNAME_TEXT = "username";
+    static public String MAIL_TEXT = "mail";
+    static public String PASSWORD_TEXT = "password";
+    static public String PHONE_TEXT = "phone";
+    static public String STATUS_TEXT = "status";
+    static public String ROLES_TEXT = "roles";
+    static public String AUTHORITIES_TEXT = "authorities";
+
+
     @Id
     @Pattern(message = "Id not valid", regexp = GlobalConstants.REGEXP_OBJECTID)
     private String id;
