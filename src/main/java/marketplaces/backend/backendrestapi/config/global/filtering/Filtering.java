@@ -3,6 +3,9 @@ package marketplaces.backend.backendrestapi.config.global.filtering;
 public class Filtering {
     private int size;
     private int page;
+    private String text;
+    private int status;
+    
 
     public Filtering(int size, int page) {
         this.size = size;
