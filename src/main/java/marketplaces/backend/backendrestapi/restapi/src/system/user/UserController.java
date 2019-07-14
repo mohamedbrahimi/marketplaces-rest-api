@@ -36,8 +36,8 @@ public class UserController {
 
 
     @GetMapping("/{size}/{page}")
-    public Page<User> getUsers(@PathVariable int size, @PathVariable int page) {
-        return userService.find(new Filtering(size, page));
+    public Page<User> getUsers(@RequestBody User filterFields ,@PathVariable int size, @PathVariable int page) {
+        return userService.find(filterFields, new Filtering(size, page));
     }
 
     @GetMapping("/{id}")

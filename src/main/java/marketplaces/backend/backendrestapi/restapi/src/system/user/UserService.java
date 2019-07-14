@@ -20,16 +20,18 @@ public class UserService {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    Page<User> find(Filtering filtering){
+    Page<User> find(User filterFields, Filtering filtering){
         Pageable pageable = PageRequest.of(filtering.getPage(), filtering.getSize());
         Query query = new Query().with(pageable);
 
+        query.addCriteria(Criteria.where(User.USERNAME_TEXT).regex(""));
+
         query.with(new Sort(Sort.Direction.DESC, "count"));
-        query.fields().include("username");
-        query.fields().include("mail");
-        query.fields().include("phone");
-        query.fields().include("roles");
-        query.addCriteria(Criteria.where("status").is(1));
+        query.fields().include(User.USERNAME_TEXT);
+        query.fields().include(User.MAIL_TEXT);
+        query.fields().include(User.MAIL_TEXT);
+        query.fields().include(User.ROLES_TEXT);
+        query.addCriteria(Criteria.where(User.STATUS_TEXT).is(1));
 
         List<User> list =  mongoTemplate.find(query, User.class);
         return PageableExecutionUtils.getPage(
