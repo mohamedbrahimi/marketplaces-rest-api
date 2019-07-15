@@ -20,11 +20,11 @@ public class UserService {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    Page<User> find(User filterFields, Filtering filtering){
+    Page<User> find(Filtering filtering){
         Pageable pageable = PageRequest.of(filtering.getPage(), filtering.getSize());
         Query query = new Query().with(pageable);
 
-        query.addCriteria(Criteria.where(User.USERNAME_TEXT).regex(""));
+        query.addCriteria(Criteria.where(User.USERNAME_TEXT).regex(filtering.getText()));
 
         query.with(new Sort(Sort.Direction.DESC, "count"));
         query.fields().include(User.USERNAME_TEXT);
