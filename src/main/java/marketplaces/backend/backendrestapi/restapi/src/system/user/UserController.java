@@ -50,13 +50,13 @@ public class UserController {
     public void insert(@RequestBody User user) {
 
         try {
-            user = this.encodePasseord(user);
+            user = userService.encodePasseord(user);
             userRepository.insert(user);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            this.CheckIfValidUser(user);
-            this.CheckIfNewUser(user);
-            this.UnknownException();
+            userService.CheckIfValidUser(user);
+            userService.CheckIfNewUser(user);
+            userService.UnknownException(e.getMessage());
         }
     }
 
