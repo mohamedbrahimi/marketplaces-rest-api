@@ -45,7 +45,9 @@ public class User extends Auditable<String> {
     private String password;
     @Indexed(direction = IndexDirection.ASCENDING)
     private int status = 1;
+    @Indexed(direction = IndexDirection.ASCENDING)
     private String roles;
+    @Indexed(direction = IndexDirection.ASCENDING)
     private String authorities;
 
 
