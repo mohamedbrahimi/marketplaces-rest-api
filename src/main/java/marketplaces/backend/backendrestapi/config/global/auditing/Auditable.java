@@ -8,6 +8,12 @@ import java.util.Date;
 
 public abstract class Auditable<U> {
 
+    static public String VERSION_TEXT = "version";
+    static public String CREATED_AT_TEXT = "createdAt";
+    static public String LAST_MODIFIED_TEXT = "lastModified";
+    static public String CREATED_BY_TEXT = "createdBy";
+    static public String LAST_MODIFIED_USER_TEXT = "lastModifiedUser";
+
     @Version
     private Long version;
     @CreatedDate

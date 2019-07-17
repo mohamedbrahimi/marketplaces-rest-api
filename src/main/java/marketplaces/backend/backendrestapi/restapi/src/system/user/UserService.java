@@ -16,12 +16,11 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -42,10 +41,6 @@ public class UserService {
                 Criteria.where(User.ROLES_TEXT).regex(filtering.getText()),
                 Criteria.where(User.AUTHORITIES_TEXT).regex(filtering.getText())
         );
-
-        System.out.println(filtering.getStatus());
-        System.out.println(Arrays.asList(0, 1).contains(filtering.getStatus()));
-
 
         if( Arrays.asList(0, 1).contains(filtering.getStatus()) )
         criteria.andOperator(Criteria.where(User.STATUS_TEXT).is(filtering.getStatus()));
@@ -70,36 +65,51 @@ public class UserService {
 
     }
 
-    User update(User user){
+    void insert(User user){
+        try {
+            user = this.encodePasseord(user);
+            mongoTemplate.insert(user);
+        } catch (Exception e) {
+            this.CheckIfValidUser(user);
+            this.CheckIfNewUser(user);
+            this.UnknownException(e.getMessage());
+        }
+    }
+
+
+    void update(User user){
         // need to perform this function.
         user = this.encodePasseord(user);
-        this.CheckIfValidUser(user);
+        this.CheckIfValidUser(user, Arrays.asList(
+                (user.getUsername() == null) ? "": user.USERNAME_TEXT,
+                (user.getMail() == null) ? "": user.MAIL_TEXT,
+                (user.getPassword() == null) ? "": user.PASSWORD_TEXT,
+                (user.getPhone() == null) ? "": user.PHONE_TEXT
+        ));
         this.CheckIfNewUser(user);
         try{
             Query query = new Query();
             query.addCriteria(Criteria.where("id").is(user.getId()));
             Update update = new Update();
-            if(user.getUsername() != null) update.set("username",user.getUsername());
-            if(user.getMail() != null) update.set("mail",user.getMail());
-            if(user.getPhone() != null) update.set("phone",user.getPhone());
-            if(user.getPassword() != null) update.set("password",user.getPassword());
-            if(user.getRoles() != null) update.set("roles",user.getRoles());
-            if(user.getAuthorities() != null) update.set("authorities",user.getAuthorities());
-            if(user.getStatus() == 1 || user.getStatus() == 0 ) update.set("status",user.getStatus());
+            if(user.getUsername() != null) update.set(user.USERNAME_TEXT,user.getUsername());
+            if(user.getMail() != null) update.set(user.MAIL_TEXT,user.getMail());
+            if(user.getPhone() != null) update.set(user.PHONE_TEXT,user.getPhone());
+            if(user.getPassword() != null) update.set(user.PASSWORD_TEXT,user.getPassword());
+            if(user.getRoles() != null) update.set(user.ROLES_TEXT,user.getRoles());
+            if(user.getAuthorities() != null) update.set(user.AUTHORITIES_TEXT,user.getAuthorities());
+            if(user.getStatus() == 1 || user.getStatus() == 0 ) update.set(user.STATUS_TEXT,user.getStatus());
 
-            try {
-                mongoTemplate.findAndModify(query, update, User.class);
-                //  userRepository.save(user);
-            } catch (Exception e) {
+            // TRY TO DO AUDITING SYSTEM ( THIS WORK NEED TO BE AUTOMATICALLY )
 
-                this.UnknownException(e.getMessage());
-            }
+            update.set(user.LAST_MODIFIED_TEXT, new Date());
+            update.set(user.LAST_MODIFIED_USER_TEXT, SecurityContextHolder.getContext().getAuthentication().getName());
+
+            mongoTemplate.findAndModify(query, update, User.class);
 
         }catch(Exception e){
             this.UnknownException(e.getMessage());
         }
 
-        return null;
     }
 
 
@@ -109,22 +119,32 @@ public class UserService {
     these functions must be more organized
     */
 
-    public void CheckIfValidUser(User user) {
+    public void CheckIfValidUser(User user, List<String> forFields) {
 
         user = (User) user;
 
         if (user.getId() != null && !user.getId().matches(GlobalConstants.REGEXP_OBJECTID))
             throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
-        if (user.getUsername() == null || user.getUsername().length() < 4)
+        if (forFields.contains(user.USERNAME_TEXT) && ( user.getUsername() == null || user.getUsername().length() < 4))
             throw new ApiRequestException(ExceptionMessages.ERROR_USER_SMALL_THEN_4);
-        if (user.getPassword() == null || user.getPassword().length() < 8)
+        if (forFields.contains(user.PASSWORD_TEXT) && (user.getPassword() == null || user.getPassword().length() < 8))
             throw new ApiRequestException(ExceptionMessages.ERROR_PASS_SMALL_THEN_8);
-        if (user.getMail() == null || user.getPhone() == null || user.getMail().equals("") || user.getPhone().equals(""))
+        if (forFields.contains(user.MAIL_TEXT) && (user.getMail() == null || user.getPhone() == null || user.getMail().equals("") || user.getPhone().equals("")))
             throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
-        if (!user.getMail().matches(GlobalConstants.REGEXP_FOR_MAIL_VALDATION))
+        if (forFields.contains(user.MAIL_TEXT) && (!user.getMail().matches(GlobalConstants.REGEXP_FOR_MAIL_VALDATION)))
             throw new ApiRequestException(ExceptionMessages.ERROR_INVALID_MAIL);
-        if (!user.getPhone().matches(GlobalConstants.REGEXP_FOR_PHONE_NATIONAL_FORMAT))
+        if (forFields.contains(user.PHONE_TEXT) && (!user.getPhone().matches(GlobalConstants.REGEXP_FOR_PHONE_NATIONAL_FORMAT)))
             throw new ApiRequestException(ExceptionMessages.ERROR_INVALID_PHONE_NUMBER);
+    }
+
+    public void CheckIfValidUser(User user){
+
+        CheckIfValidUser(user, Arrays.asList(
+                user.USERNAME_TEXT,
+                user.MAIL_TEXT,
+                user.PHONE_TEXT,
+                user.PASSWORD_TEXT
+        ));
     }
 
 
@@ -178,11 +198,11 @@ public class UserService {
         // a lot lines of codes to test if we need to encode the password
         // Need to minimize this by mongo hooks
 
-        if (user.getPassword() == null)
+        if (user.getPassword() == null && user.getId() == null) // new instance.
             throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
 
-        if (user.getId() == null) {
-            user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        if (user.getPassword() == null && user.getId() != null) { // not need to update the password.
+            return user;
         }
         else {
 
