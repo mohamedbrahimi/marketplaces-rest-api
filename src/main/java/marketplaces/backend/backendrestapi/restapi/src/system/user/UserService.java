@@ -112,6 +112,37 @@ public class UserService {
 
     }
 
+    void delete(String id){
+
+        Optional<User> optionalUser = userRepository.findById(id);
+        User user = Optional.empty().equals(optionalUser) ? null : optionalUser.get();
+
+        if(user == null || user.getIsArchived() == 1)
+            throw new ApiRequestException(ExceptionMessages.ERROR_DOCUMENT_NOT_FOUND);
+
+        try {
+
+
+            Query query = new Query();
+            query.addCriteria(Criteria.where("id").is(id));
+            Update update = new Update();
+
+            update.set(User.STATUS_TEXT, 0);
+            update.set(User.ISARCHIVED_TEXT, 1);
+            String currentDate = (new Date()).toString();
+            update.set(User.USERNAME_TEXT, user.getUsername()+ "_ARCHIVED_"+ currentDate);
+            update.set(User.PHONE_TEXT, user.getPhone()+ "_ARCHIVED_"+ currentDate);
+            update.set(User.MAIL_TEXT, user.getMail()+ "_ARCHIVED_"+ currentDate);
+
+            update.set(User.LAST_MODIFIED_TEXT, new Date());
+            update.set(User.LAST_MODIFIED_USER_TEXT, SecurityContextHolder.getContext().getAuthentication().getName());
+
+            mongoTemplate.findAndModify(query, update, User.class);
+        }catch (Exception e){
+            this.UnknownException(e.getMessage());
+        }
+    }
+
 
 
     /*
