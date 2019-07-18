@@ -34,7 +34,7 @@ public class UserService {
         Pageable pageable = PageRequest.of(filtering.getPage(), filtering.getSize());
 
         Criteria criteria = new Criteria();
-        criteria.orOperator(
+        criteria.orOperator( // NEED TO IMPLEMENT ES (ELASTICSEARCH).
                 Criteria.where(User.USERNAME_TEXT).regex(filtering.getText()),
                 Criteria.where(User.MAIL_TEXT).regex(filtering.getText()),
                 Criteria.where(User.PHONE_TEXT).regex(filtering.getText()),
@@ -81,28 +81,28 @@ public class UserService {
         // need to perform this function.
         user = this.encodePasseord(user);
         this.CheckIfValidUser(user, Arrays.asList(
-                (user.getUsername() == null) ? "": user.USERNAME_TEXT,
-                (user.getMail() == null) ? "": user.MAIL_TEXT,
-                (user.getPassword() == null) ? "": user.PASSWORD_TEXT,
-                (user.getPhone() == null) ? "": user.PHONE_TEXT
+                (user.getUsername() == null) ? "": User.USERNAME_TEXT,
+                (user.getMail() == null) ? "": User.MAIL_TEXT,
+                (user.getPassword() == null) ? "": User.PASSWORD_TEXT,
+                (user.getPhone() == null) ? "": User.PHONE_TEXT
         ));
         this.CheckIfNewUser(user);
         try{
             Query query = new Query();
             query.addCriteria(Criteria.where("id").is(user.getId()));
             Update update = new Update();
-            if(user.getUsername() != null) update.set(user.USERNAME_TEXT,user.getUsername());
-            if(user.getMail() != null) update.set(user.MAIL_TEXT,user.getMail());
-            if(user.getPhone() != null) update.set(user.PHONE_TEXT,user.getPhone());
-            if(user.getPassword() != null) update.set(user.PASSWORD_TEXT,user.getPassword());
-            if(user.getRoles() != null) update.set(user.ROLES_TEXT,user.getRoles());
-            if(user.getAuthorities() != null) update.set(user.AUTHORITIES_TEXT,user.getAuthorities());
-            if(user.getStatus() == 1 || user.getStatus() == 0 ) update.set(user.STATUS_TEXT,user.getStatus());
+            if(user.getUsername() != null) update.set(User.USERNAME_TEXT,user.getUsername());
+            if(user.getMail() != null) update.set(User.MAIL_TEXT,user.getMail());
+            if(user.getPhone() != null) update.set(User.PHONE_TEXT,user.getPhone());
+            if(user.getPassword() != null) update.set(User.PASSWORD_TEXT,user.getPassword());
+            if(user.getRoles() != null) update.set(User.ROLES_TEXT,user.getRoles());
+            if(user.getAuthorities() != null) update.set(User.AUTHORITIES_TEXT,user.getAuthorities());
+            if(user.getStatus() == 1 || user.getStatus() == 0 ) update.set(User.STATUS_TEXT,user.getStatus());
 
             // TRY TO DO AUDITING SYSTEM ( THIS WORK NEED TO BE AUTOMATICALLY )
 
-            update.set(user.LAST_MODIFIED_TEXT, new Date());
-            update.set(user.LAST_MODIFIED_USER_TEXT, SecurityContextHolder.getContext().getAuthentication().getName());
+            update.set(User.LAST_MODIFIED_TEXT, new Date());
+            update.set(User.LAST_MODIFIED_USER_TEXT, SecurityContextHolder.getContext().getAuthentication().getName());
 
             mongoTemplate.findAndModify(query, update, User.class);
 
