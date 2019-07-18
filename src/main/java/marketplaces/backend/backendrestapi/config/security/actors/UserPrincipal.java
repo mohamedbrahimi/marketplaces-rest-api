@@ -53,7 +53,8 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.user.getIsArchived() == 0;
+
     }
 
     @Override
@@ -63,6 +64,6 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.user.getStatus() == 1;
+        return this.user.getStatus() == 1 ;
     }
 }
