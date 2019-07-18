@@ -22,6 +22,7 @@ public class User extends Auditable<String> {
     static public String PASSWORD_TEXT = "password";
     static public String PHONE_TEXT = "phone";
     static public String STATUS_TEXT = "status";
+    static public String ISARCHIVED_TEXT = "isArchived";
     static public String ROLES_TEXT = "roles";
     static public String AUTHORITIES_TEXT = "authorities";
 
@@ -45,6 +46,8 @@ public class User extends Auditable<String> {
     private String password;
     @Indexed(direction = IndexDirection.ASCENDING)
     private int status = 1;
+    @Indexed(direction = IndexDirection.DESCENDING)
+    private int isArchived = 0;
     @Indexed(direction = IndexDirection.ASCENDING)
     private String roles;
     @Indexed(direction = IndexDirection.ASCENDING)
@@ -81,6 +84,13 @@ public class User extends Auditable<String> {
         return status;
     }
 
+    public int getIsArchived() {
+        return isArchived;
+    }
+
+    public void setIsArchived(int isArchived) {
+        this.isArchived = isArchived;
+    }
 
     public String getRoles() {
         return roles;
