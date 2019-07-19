@@ -31,6 +31,9 @@ public class Pack {
     @Indexed(direction = IndexDirection.ASCENDING)
     private int status = 1;
 
+    @Indexed(direction = IndexDirection.DESCENDING)
+    private int isArchived = 0;
+
 
     public  Pack(){}
 
@@ -66,5 +69,11 @@ public class Pack {
         this.status = status;
     }
 
+    public int getIsArchived() {
+        return isArchived;
+    }
 
+    public void setIsArchived(int isArchived) {
+        this.isArchived = isArchived;
+    }
 }
