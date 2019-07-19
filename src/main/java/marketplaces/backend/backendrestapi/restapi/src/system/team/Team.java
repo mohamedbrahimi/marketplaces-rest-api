@@ -4,12 +4,11 @@ import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.Date;
 
 @Document(collection = "teams")
 public class Team {
@@ -29,6 +28,11 @@ public class Team {
     @Indexed(direction = IndexDirection.ASCENDING)
     private int status = 1;
 
+    @Indexed(direction = IndexDirection.ASCENDING)
+    private int isArchived = 0;
+
+    @DBRef(db = "packs")
+    private  String packs;
 
 
     public String getId() {
@@ -55,5 +59,20 @@ public class Team {
         this.status = status;
     }
 
+    public int getIsArchived() {
+        return isArchived;
+    }
+
+    public void setIsArchived(int isArchived) {
+        this.isArchived = isArchived;
+    }
+
+    public String getPacks() {
+        return packs;
+    }
+
+    public void setPacks(String packs) {
+        this.packs = packs;
+    }
 }
 

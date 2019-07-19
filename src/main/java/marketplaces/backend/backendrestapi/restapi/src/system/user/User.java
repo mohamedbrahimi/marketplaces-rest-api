@@ -22,7 +22,7 @@ public class User extends Auditable<String> {
     static public String PASSWORD_TEXT = "password";
     static public String PHONE_TEXT = "phone";
     static public String STATUS_TEXT = "status";
-    static public String ISARCHIVED_TEXT = "isArchived";
+    static public String IS_ARCHIVED_TEXT = "isArchived";
     static public String ROLES_TEXT = "roles";
     static public String AUTHORITIES_TEXT = "authorities";
 

@@ -128,7 +128,7 @@ public class UserService {
             Update update = new Update();
 
             update.set(User.STATUS_TEXT, 0);
-            update.set(User.ISARCHIVED_TEXT, 1);
+            update.set(User.IS_ARCHIVED_TEXT, 1);
             String currentDate = (new Date()).toString();
             update.set(User.USERNAME_TEXT, user.getUsername()+ "_ARCHIVED_"+ currentDate);
             update.set(User.PHONE_TEXT, user.getPhone()+ "_ARCHIVED_"+ currentDate);
