@@ -1,6 +1,9 @@
 package marketplaces.backend.backendrestapi.restapi.src.system.pack;
 
+import marketplaces.backend.backendrestapi.config.global.ApiMessageBody;
 import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
+import marketplaces.backend.backendrestapi.config.global.auditing.Auditable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -14,15 +17,18 @@ import java.util.Date;
 
 
 @Document(collection = "packs")
-public class Pack {
+public class Pack extends Auditable<String> {
     @Id
     @Pattern(message = "Id not valid", regexp = GlobalConstants.REGEXP_OBJECTID)
     private String id;
     @NotNull(message = "code must be not null !!")
     @Indexed(direction = IndexDirection.ASCENDING, unique = true)
     private String code;
-    @NotNull(message = "username must be not null !!")
-    private String label;
+    @NotNull(message = "label must be not null !!")
+    private ApiMessageBody label;
+
+    @NotNull(message = "desc must be not null !!")
+    private ApiMessageBody desc;
 
     @NotNull(message = "cost must be not null !!")
     @Indexed(direction = IndexDirection.ASCENDING)
@@ -45,12 +51,20 @@ public class Pack {
         return code;
     }
 
-    public String getLabel() {
+    public ApiMessageBody getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(ApiMessageBody label) {
         this.label = label;
+    }
+
+    public ApiMessageBody getDesc() {
+        return desc;
+    }
+
+    public void setDesc(ApiMessageBody desc) {
+        this.desc = desc;
     }
 
     public float getCost() {
