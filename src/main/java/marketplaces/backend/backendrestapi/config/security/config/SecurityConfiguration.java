@@ -46,9 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // configure access rules
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
                 .antMatchers("/sys/users/**").hasAuthority("ACCESS_READ")
-                .antMatchers("/api/public/management/*").hasRole("MANAGER")
-                .antMatchers("/api/public/admin/*").hasRole("ADMIN")
-               // .antMatchers("/**").hasRole("ADMIN")
+                .antMatchers("/sys/packs/**").hasRole("ADMIN")
                 .anyRequest().authenticated();
     }
 
