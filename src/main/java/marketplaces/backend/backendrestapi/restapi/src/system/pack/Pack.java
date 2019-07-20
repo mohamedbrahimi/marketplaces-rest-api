@@ -18,6 +18,14 @@ import java.util.Date;
 
 @Document(collection = "packs")
 public class Pack extends Auditable<String> {
+
+    static public String CODE_TEXT = "code";
+    static public String LABEL_TEXT = "label";
+    static public String DESC_TEXT = "desc";
+    static public String COST_TEXT = "cost";
+    static public String STATUS_TEXT = "status";
+    static public String IS_ARCHIVED_TEXT = "isArchived";
+
     @Id
     @Pattern(message = "Id not valid", regexp = GlobalConstants.REGEXP_OBJECTID)
     private String id;
