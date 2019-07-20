@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface PackRepository extends MongoRepository<Pack, String> {
     Optional<Pack> findById(String id);
+    Optional<Pack> findByCode(String code);
 }

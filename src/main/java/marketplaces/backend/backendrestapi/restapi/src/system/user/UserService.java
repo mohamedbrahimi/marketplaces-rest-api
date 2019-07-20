@@ -30,7 +30,7 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    Page<User> find(Filtering filtering){
+    public Page<User> find(Filtering filtering){
         Pageable pageable = PageRequest.of(filtering.getPage(), filtering.getSize());
 
         Criteria criteria = new Criteria();
@@ -152,8 +152,6 @@ public class UserService {
 
     public void CheckIfValidUser(User user, List<String> forFields) {
 
-        user = (User) user;
-
         if (user.getId() != null && !user.getId().matches(GlobalConstants.REGEXP_OBJECTID))
             throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
         if (forFields.contains(user.USERNAME_TEXT) && ( user.getUsername() == null || user.getUsername().length() < 4))
@@ -171,10 +169,10 @@ public class UserService {
     public void CheckIfValidUser(User user){
 
         CheckIfValidUser(user, Arrays.asList(
-                user.USERNAME_TEXT,
-                user.MAIL_TEXT,
-                user.PHONE_TEXT,
-                user.PASSWORD_TEXT
+                User.USERNAME_TEXT,
+                User.MAIL_TEXT,
+                User.PHONE_TEXT,
+                User.PASSWORD_TEXT
         ));
     }
 

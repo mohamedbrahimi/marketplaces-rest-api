@@ -105,6 +105,17 @@ public final class ExceptionMessages {
             )
     );
 
+    public static final ApiExceptionMessage ERROR_EXISTING_PACK_CODE = new ApiExceptionMessage(
+            ERROR_PEFIX.concat("ERROR_EXISTING_PACK_CODE"),
+            new ApiMessageBody(
+                    "Veuillez changer ce code",
+                    "",
+                    "You need to change this code!"
+            )
+    );
+
+
+
     public static final ApiExceptionMessage ERROR_UNKNOWN_EXCEPTION = new ApiExceptionMessage(
             ERROR_PEFIX.concat("UNKNOWN_EXCEPTION"),
             new ApiMessageBody(
