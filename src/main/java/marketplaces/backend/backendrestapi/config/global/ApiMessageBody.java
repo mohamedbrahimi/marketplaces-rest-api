@@ -1,11 +1,11 @@
-package marketplaces.backend.backendrestapi.config.exceptions;
+package marketplaces.backend.backendrestapi.config.global;
 
-public class ApiExceptionMessageBody {
+public class ApiMessageBody {
     private String fr;
     private String ar;
     private String en;
 
-    public ApiExceptionMessageBody(String fr, String ar, String en) {
+    public ApiMessageBody(String fr, String ar, String en) {
         this.fr = fr;
         this.ar = ar;
         this.en = en;
