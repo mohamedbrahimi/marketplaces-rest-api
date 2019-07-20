@@ -1,6 +1,6 @@
 package marketplaces.backend.backendrestapi.config.exceptions.constants;
 
-import marketplaces.backend.backendrestapi.config.exceptions.ApiExceptionMessageBody;
+import marketplaces.backend.backendrestapi.config.global.ApiMessageBody;
 import marketplaces.backend.backendrestapi.config.exceptions.ApiExceptionMessage;
 
 public final class ExceptionMessages {
@@ -8,7 +8,7 @@ public final class ExceptionMessages {
     public static final String ERROR_PEFIX = "ERROR_";
     public static final ApiExceptionMessage ERROR_NOT_FOUND = new ApiExceptionMessage(
             ERROR_PEFIX.concat("NOT_FOUND"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "",
                     "",
                     ""
@@ -17,7 +17,7 @@ public final class ExceptionMessages {
 
     public static final ApiExceptionMessage ERROR_DOCUMENT_NOT_FOUND = new ApiExceptionMessage(
             ERROR_PEFIX.concat("DOCUMENT_NOT_FOUND"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "Ce document n'existe pas !",
                     "",
                     "This document not found !"
@@ -26,7 +26,7 @@ public final class ExceptionMessages {
 
     public static final ApiExceptionMessage ERROR_OBJECT_ID_NOT_VALID = new ApiExceptionMessage(
             ERROR_PEFIX.concat("OBJECT_ID_NOT_VALID"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "Cet id n'est pas correct !",
                     "",
                     "This id is not valid !"
@@ -35,7 +35,7 @@ public final class ExceptionMessages {
 
     public static final ApiExceptionMessage ERROR_USER_SMALL_THEN_4 = new ApiExceptionMessage(
             ERROR_PEFIX.concat("USER_SMALL_THEN_4"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "Le nom doit être supérieur à 4 !!",
                     "",
                     "The name must be bigger then 4 caracters !!"
@@ -44,7 +44,7 @@ public final class ExceptionMessages {
 
     public static final ApiExceptionMessage ERROR_PASS_SMALL_THEN_8 = new ApiExceptionMessage(
             ERROR_PEFIX.concat("PASS_SMALL_THEN_8"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "le mot de passe doit être supérieur à 8 !!",
                     "",
                     "The password must be bigger then 8 caracters !!"
@@ -53,7 +53,7 @@ public final class ExceptionMessages {
 
     public static final ApiExceptionMessage ERROR_FIELD_NULL = new ApiExceptionMessage(
             ERROR_PEFIX.concat("FIELD_NULL"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "Veuillez remplir tous les champs !!",
                     "",
                     "Try to send all fields !!"
@@ -62,7 +62,7 @@ public final class ExceptionMessages {
 
     public static final ApiExceptionMessage ERROR_INVALID_MAIL = new ApiExceptionMessage(
             ERROR_PEFIX.concat("INVALID_MAIL"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "Adresse email non valide !!",
                     "",
                     "Address email not valid !!"
@@ -71,7 +71,7 @@ public final class ExceptionMessages {
 
     public static final ApiExceptionMessage ERROR_INVALID_PHONE_NUMBER = new ApiExceptionMessage(
             ERROR_PEFIX.concat("INVALID_PHONE_NUMBER"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "Un numéro du télephone incorrect !!",
                     "",
                     "The number phone in incorrect !!"
@@ -80,7 +80,7 @@ public final class ExceptionMessages {
 
     public static final ApiExceptionMessage ERROR_EXISTING_USERNAME = new ApiExceptionMessage(
             ERROR_PEFIX.concat("EXISTING_USERNAME"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "Veuillez changer ce nom d'utilisatuer !!",
                     "",
                     "You need to choose another username!!"
@@ -89,7 +89,7 @@ public final class ExceptionMessages {
 
     public static final ApiExceptionMessage ERROR_EXISTING_MAIL = new ApiExceptionMessage(
             ERROR_PEFIX.concat("EXISTING_MAIL"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "Veuillez changer cette adresse mail!!",
                     "",
                     "You need to pass another address mail!!"
@@ -98,7 +98,7 @@ public final class ExceptionMessages {
 
     public static final ApiExceptionMessage ERROR_EXISTING_PHONE = new ApiExceptionMessage(
             ERROR_PEFIX.concat("EXISTING_PHONE"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "Veuillez changer ce numero du telephone!!",
                     "",
                     "You need to pass another phone number l!!"
@@ -107,7 +107,7 @@ public final class ExceptionMessages {
 
     public static final ApiExceptionMessage ERROR_UNKNOWN_EXCEPTION = new ApiExceptionMessage(
             ERROR_PEFIX.concat("UNKNOWN_EXCEPTION"),
-            new ApiExceptionMessageBody(
+            new ApiMessageBody(
                     "Le systeme a rencontre des probleme durant le traitement de votre requete !!",
                     "",
                     "The system was have difficult to trait your request !!"

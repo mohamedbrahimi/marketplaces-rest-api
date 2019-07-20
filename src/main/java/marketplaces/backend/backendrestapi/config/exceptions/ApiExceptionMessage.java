@@ -1,16 +1,18 @@
 package marketplaces.backend.backendrestapi.config.exceptions;
 
+import marketplaces.backend.backendrestapi.config.global.ApiMessageBody;
+
 public class ApiExceptionMessage {
     private String code;
-    private ApiExceptionMessageBody body;
+    private ApiMessageBody body;
     private String additionalMessage;
 
-    public ApiExceptionMessage(String code, ApiExceptionMessageBody body) {
+    public ApiExceptionMessage(String code, ApiMessageBody body) {
         this.code = code;
         this.body = body;
     }
 
-    public ApiExceptionMessage(String code, ApiExceptionMessageBody body, String additionalMessage) {
+    public ApiExceptionMessage(String code, ApiMessageBody body, String additionalMessage) {
         this.code = code;
         this.body = body;
         this.additionalMessage = additionalMessage;
@@ -24,11 +26,11 @@ public class ApiExceptionMessage {
         this.code = code;
     }
 
-    public ApiExceptionMessageBody getBody() {
+    public ApiMessageBody getBody() {
         return body;
     }
 
-    public void setBody(ApiExceptionMessageBody body) {
+    public void setBody(ApiMessageBody body) {
         this.body = body;
     }
 
