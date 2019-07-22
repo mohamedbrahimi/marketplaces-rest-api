@@ -15,11 +15,6 @@ public class UserController {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private MongoTemplate mongoTemplate;
-
-
-
 
 
     @GetMapping
