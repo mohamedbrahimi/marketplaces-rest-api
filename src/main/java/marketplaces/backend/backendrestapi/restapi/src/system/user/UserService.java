@@ -124,7 +124,10 @@ public class UserService {
 
 
             Query query = new Query();
+
             query.addCriteria(Criteria.where("id").is(id));
+            query.addCriteria(Criteria.where(User.IS_ARCHIVED_TEXT).is(0));
+
             Update update = new Update();
 
             update.set(User.STATUS_TEXT, 0);
