@@ -108,6 +108,8 @@ public class PackService {
             String currentDate = (new Date()).toString();
 
             query.addCriteria(Criteria.where("id").is(id));
+            query.addCriteria(Criteria.where(User.IS_ARCHIVED_TEXT).is(0));
+
             Update update = new Update();
             update.set(Pack.STATUS_TEXT, 0);
             update.set(Pack.IS_ARCHIVED_TEXT, 1);
