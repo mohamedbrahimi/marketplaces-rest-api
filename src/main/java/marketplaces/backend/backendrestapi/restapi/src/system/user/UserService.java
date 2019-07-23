@@ -5,6 +5,7 @@ import marketplaces.backend.backendrestapi.config.exceptions.constants.Exception
 import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestException;
 import marketplaces.backend.backendrestapi.config.exceptions.unknown.ApiRequestUnknownException;
 import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
+import marketplaces.backend.backendrestapi.config.global.GlobalService;
 import marketplaces.backend.backendrestapi.config.global.filtering.Filtering;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class UserService {
+public class UserService extends GlobalService<User, UserRepository> {
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -70,8 +71,14 @@ public class UserService {
             user = this.encodePasseord(user);
             mongoTemplate.insert(user);
         } catch (Exception e) {
-            this.CheckIfValidUser(user);
-            this.CheckIfNewUser(user);
+            this.CheckIfValidDoc(
+                    User.DOC_TEXT,
+                    user);
+            this.CheckIfNewDoc(
+                    User.DOC_TEXT,
+                    user,
+                    userRepository
+                    );
             this.UnknownException(e.getMessage());
         }
     }
@@ -80,13 +87,20 @@ public class UserService {
     void update(User user){
         // need to perform this function.
         user = this.encodePasseord(user);
-        this.CheckIfValidUser(user, Arrays.asList(
+        this.CheckIfValidDoc(
+                User.DOC_TEXT,
+                user,
+                Arrays.asList(
                 (user.getUsername() == null) ? "": User.USERNAME_TEXT,
                 (user.getMail() == null) ? "": User.MAIL_TEXT,
                 (user.getPassword() == null) ? "": User.PASSWORD_TEXT,
                 (user.getPhone() == null) ? "": User.PHONE_TEXT
         ));
-        this.CheckIfNewUser(user);
+        this.CheckIfNewDoc(
+                User.DOC_TEXT,
+                user,
+                userRepository
+        );
         try{
             Query query = new Query();
             query.addCriteria(Criteria.where("id").is(user.getId()));
@@ -144,85 +158,6 @@ public class UserService {
         }catch (Exception e){
             this.UnknownException(e.getMessage());
         }
-    }
-
-
-
-    /*
-    do some illegal treatments !!
-    these functions must be more organized
-    */
-
-    public void CheckIfValidUser(User user, List<String> forFields) {
-
-        if (user.getId() != null && !user.getId().matches(GlobalConstants.REGEXP_OBJECTID))
-            throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
-        if (forFields.contains(user.USERNAME_TEXT) && ( user.getUsername() == null || user.getUsername().length() < 4))
-            throw new ApiRequestException(ExceptionMessages.ERROR_USER_SMALL_THEN_4);
-        if (forFields.contains(user.PASSWORD_TEXT) && (user.getPassword() == null || user.getPassword().length() < 8))
-            throw new ApiRequestException(ExceptionMessages.ERROR_PASS_SMALL_THEN_8);
-        if (forFields.contains(user.MAIL_TEXT) && (user.getMail() == null || user.getPhone() == null || user.getMail().equals("") || user.getPhone().equals("")))
-            throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
-        if (forFields.contains(user.MAIL_TEXT) && (!user.getMail().matches(GlobalConstants.REGEXP_FOR_MAIL_VALDATION)))
-            throw new ApiRequestException(ExceptionMessages.ERROR_INVALID_MAIL);
-        if (forFields.contains(user.PHONE_TEXT) && (!user.getPhone().matches(GlobalConstants.REGEXP_FOR_PHONE_NATIONAL_FORMAT)))
-            throw new ApiRequestException(ExceptionMessages.ERROR_INVALID_PHONE_NUMBER);
-    }
-
-    public void CheckIfValidUser(User user){
-
-        CheckIfValidUser(user, Arrays.asList(
-                User.USERNAME_TEXT,
-                User.MAIL_TEXT,
-                User.PHONE_TEXT,
-                User.PASSWORD_TEXT
-        ));
-    }
-
-
-    public void CheckIfNewUser(User user) {
-
-        User newUser = (User) user;
-        Optional<User> optionalUser = user.getId() == null ? Optional.empty() : userRepository.findById(user.getId());
-
-        if (!optionalUser.equals(Optional.empty())) {
-
-            if (!optionalUser.get().getUsername().equals(newUser.getUsername()) && !userRepository.findByUsername(newUser.getUsername()).equals(Optional.empty())) {
-                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_USERNAME);
-            }
-            if (!optionalUser.get().getMail().equals(newUser.getMail()) && !userRepository.findByMail(newUser.getMail()).equals(Optional.empty())) {
-                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MAIL);
-            }
-            if (!optionalUser.get().getPhone().equals(newUser.getPhone()) && !userRepository.findByPhone(newUser.getPhone()).equals(Optional.empty())) {
-                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_PHONE);
-            }
-        } else if (user.getId() == null) {
-
-            if (!Optional.empty().equals(userRepository.findByUsername(newUser.getUsername()))) {
-                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_USERNAME);
-            }
-
-            if (!userRepository.findByMail(newUser.getMail()).equals(Optional.empty())) {
-                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MAIL);
-            }
-
-
-            if (!userRepository.findByPhone(newUser.getPhone()).equals(Optional.empty())) {
-                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_PHONE);
-            }
-        } else {
-            throw new ApiRequestException(ExceptionMessages.ERROR_DOCUMENT_NOT_FOUND);
-        }
-
-
-    }
-
-
-    public void UnknownException(String message) {
-
-        ApiExceptionMessage e = ExceptionMessages.ERROR_UNKNOWN_EXCEPTION;
-        e.setAdditionalMessage(message);
-        throw new ApiRequestUnknownException(e);
     }
 
 

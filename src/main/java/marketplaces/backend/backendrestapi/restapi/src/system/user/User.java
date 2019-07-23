@@ -17,6 +17,8 @@ import java.util.List;
 @Document(collection = "users")
 public class User extends Auditable<String> {
 
+    static public String DOC_TEXT = "USER";
+
     static public String USERNAME_TEXT = "username";
     static public String MAIL_TEXT = "mail";
     static public String PASSWORD_TEXT = "password";

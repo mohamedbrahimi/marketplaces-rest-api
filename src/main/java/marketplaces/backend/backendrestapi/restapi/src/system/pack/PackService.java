@@ -5,6 +5,7 @@ import marketplaces.backend.backendrestapi.config.exceptions.constants.Exception
 import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestException;
 import marketplaces.backend.backendrestapi.config.exceptions.unknown.ApiRequestUnknownException;
 import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
+import marketplaces.backend.backendrestapi.config.global.GlobalService;
 import marketplaces.backend.backendrestapi.config.global.filtering.Filtering;
 import marketplaces.backend.backendrestapi.restapi.src.system.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PackService {
+public class PackService extends GlobalService<Pack, PackRepository> {
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -61,21 +62,35 @@ public class PackService {
         try{
             mongoTemplate.insert(pack);
         }catch (Exception e){
-            this.CheckIfValidPack(pack);
-            this.CheckIfNewPack(pack);
+
+            this.CheckIfValidDoc(
+                            Pack.DOC_TEXT,
+                            pack
+            );
+            this.CheckIfNewDoc(
+                    Pack.DOC_TEXT,
+                    pack,
+                    packRepository
+            );
             this.UnknownException(e.getMessage());
         }
     }
 
     void update(Pack pack){
-        this.CheckIfValidPack(pack,
+        this.CheckIfValidDoc(
+                Pack.DOC_TEXT,
+                pack,
                 Arrays.asList(
                         (pack.getCode() == null) ? "": Pack.CODE_TEXT,
                         (pack.getLabel() == null) ? "": Pack.LABEL_TEXT,
                         (pack.getDesc() == null) ? "": Pack.DESC_TEXT
                         )
         );
-        this.CheckIfNewPack(pack);
+        this.CheckIfNewDoc(
+                Pack.DOC_TEXT,
+                pack,
+                packRepository
+        );
         try{
             Query query = new Query();
             query.addCriteria(Criteria.where("id").is(pack.getId()));
@@ -124,49 +139,10 @@ public class PackService {
         }
     }
 
-    public void CheckIfValidPack(Pack pack, List<String> forFields){
 
-        if(pack.getId() != null && !pack.getId().matches(GlobalConstants.REGEXP_OBJECTID))
-            throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
-        if(forFields.contains(Pack.CODE_TEXT) && pack.getCode() == null)
-            throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
-        if(forFields.contains(Pack.LABEL_TEXT) && pack.getLabel() == null)
-            throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
-        if(forFields.contains(Pack.DESC_TEXT) && pack.getDesc() == null)
-            throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
 
-    }
 
-    public void CheckIfValidPack(Pack pack){
-        CheckIfValidPack(
-                pack,
-                Arrays.asList(
-                   Pack.CODE_TEXT,
-                   Pack.LABEL_TEXT,
-                   Pack.DESC_TEXT
-                )
-        );
-    }
 
-    public void CheckIfNewPack(Pack pack){
-        Optional<Pack> optionalPack = pack.getId() == null ? Optional.empty() : packRepository.findById(pack.getId());
-        if(!optionalPack.equals(Optional.empty())){
 
-            if(!optionalPack.get().getCode().equals(pack.getCode()) && !packRepository.findByCode(pack.getCode()).equals(Optional.empty()))
-                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_PACK_CODE);
-        }else if(pack.getId() == null){
-            if(!Optional.empty().equals(packRepository.findByCode(pack.getCode())))
-                throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_PACK_CODE);
-        }else{
-            throw new ApiRequestException(ExceptionMessages.ERROR_DOCUMENT_NOT_FOUND);
-        }
-    }
-
-    public void UnknownException(String message) {
-
-        ApiExceptionMessage e = ExceptionMessages.ERROR_UNKNOWN_EXCEPTION;
-        e.setAdditionalMessage(message);
-        throw new ApiRequestUnknownException(e);
-    }
 
 }
