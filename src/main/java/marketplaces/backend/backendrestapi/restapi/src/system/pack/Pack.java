@@ -19,6 +19,8 @@ import java.util.Date;
 @Document(collection = "packs")
 public class Pack extends Auditable<String> {
 
+    static public String DOC_TEXT = "PACK";
+
     static public String CODE_TEXT = "code";
     static public String LABEL_TEXT = "label";
     static public String DESC_TEXT = "desc";
