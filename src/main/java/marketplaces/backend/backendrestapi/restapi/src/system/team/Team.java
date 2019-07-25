@@ -1,6 +1,7 @@
 package marketplaces.backend.backendrestapi.restapi.src.system.team;
 
 import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
+import marketplaces.backend.backendrestapi.config.global.auditing.Auditable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -11,7 +12,16 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Document(collection = "teams")
-public class Team {
+public class Team extends Auditable<String> {
+
+    static public String DOC_TEXT = "TEAM";
+
+    static public String CODE_TEXT = "code";
+    static public String LABEL_TEXT = "label";
+    static public String DESC_TEXT = "desc";
+    static public String STATUS_TEXT = "status";
+    static public String PACK_TEXT = "status";
+    static public String IS_ARCHIVED_TEXT = "isArchived";
 
     @Id
     @Pattern(message = "Id not valid", regexp = GlobalConstants.REGEXP_OBJECTID)
@@ -22,8 +32,10 @@ public class Team {
     private String code;
 
     @NotNull(message = "label must be not null !!")
-    @Indexed(direction = IndexDirection.ASCENDING)
     private String label;
+
+    @NotNull(message = "desc must be not null !!")
+    private String desc;
 
     @Indexed(direction = IndexDirection.ASCENDING)
     private int status = 1;
@@ -32,7 +44,7 @@ public class Team {
     private int isArchived = 0;
 
     @DBRef(db = "packs")
-    private  String packs;
+    private  String pack;
 
 
     public String getId() {
@@ -67,12 +79,12 @@ public class Team {
         this.isArchived = isArchived;
     }
 
-    public String getPacks() {
-        return packs;
+    public String getPack() {
+        return pack;
     }
 
-    public void setPacks(String packs) {
-        this.packs = packs;
+    public void setPack(String pack) {
+        this.pack = pack;
     }
 }
 

@@ -1,10 +1,7 @@
 package marketplaces.backend.backendrestapi.restapi.src.system.user;
 
-import marketplaces.backend.backendrestapi.config.exceptions.ApiExceptionMessage;
 import marketplaces.backend.backendrestapi.config.exceptions.constants.ExceptionMessages;
 import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestException;
-import marketplaces.backend.backendrestapi.config.exceptions.unknown.ApiRequestUnknownException;
-import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
 import marketplaces.backend.backendrestapi.config.global.GlobalService;
 import marketplaces.backend.backendrestapi.config.global.filtering.Filtering;
 import org.springframework.beans.factory.annotation.Autowired;
