@@ -7,7 +7,6 @@ import marketplaces.backend.backendrestapi.config.exceptions.unknown.ApiRequestU
 import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
 import marketplaces.backend.backendrestapi.config.global.GlobalService;
 import marketplaces.backend.backendrestapi.config.global.filtering.Filtering;
-import marketplaces.backend.backendrestapi.restapi.src.system.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,7 +40,7 @@ public class PackService extends GlobalService<Pack, PackRepository> {
                 Criteria.where(Pack.CODE_TEXT).regex(filtering.getText())
         );
         if( Arrays.asList(0, 1).contains(filtering.getStatus()) )
-            criteria.andOperator(Criteria.where(User.STATUS_TEXT).is(filtering.getStatus()));
+            criteria.andOperator(Criteria.where(Pack.STATUS_TEXT).is(filtering.getStatus()));
         Query query = new Query(criteria).with(pageable);
         query.with(new Sort(Sort.Direction.DESC, "count"));
 
@@ -103,8 +102,8 @@ public class PackService extends GlobalService<Pack, PackRepository> {
 
             // TRY TO DO AUDITING SYSTEM ( THIS WORK NEED TO BE AUTOMATICALLY )
 
-            update.set(User.LAST_MODIFIED_TEXT, new Date());
-            update.set(User.LAST_MODIFIED_USER_TEXT, SecurityContextHolder.getContext().getAuthentication().getName());
+            update.set(Pack.LAST_MODIFIED_TEXT, new Date());
+            update.set(Pack.LAST_MODIFIED_USER_TEXT, SecurityContextHolder.getContext().getAuthentication().getName());
 
             mongoTemplate.findAndModify(query, update, Pack.class);
 
@@ -123,15 +122,15 @@ public class PackService extends GlobalService<Pack, PackRepository> {
             String currentDate = (new Date()).toString();
 
             query.addCriteria(Criteria.where("id").is(id));
-            query.addCriteria(Criteria.where(User.IS_ARCHIVED_TEXT).is(0));
+            query.addCriteria(Criteria.where(Pack.IS_ARCHIVED_TEXT).is(0));
 
             Update update = new Update();
             update.set(Pack.STATUS_TEXT, 0);
             update.set(Pack.IS_ARCHIVED_TEXT, 1);
-            update.set(Pack.CODE_TEXT, pack.getCode()+"_ARCHIVED"+ currentDate);
+            update.set(Pack.CODE_TEXT, pack.getCode()+GlobalConstants.DEFAULT_SUFFIX_OF_ARCHIVED_DOC+ currentDate);
 
-            update.set(User.LAST_MODIFIED_TEXT, new Date());
-            update.set(User.LAST_MODIFIED_USER_TEXT, SecurityContextHolder.getContext().getAuthentication().getName());
+            update.set(Pack.LAST_MODIFIED_TEXT, new Date());
+            update.set(Pack.LAST_MODIFIED_USER_TEXT, SecurityContextHolder.getContext().getAuthentication().getName());
 
             mongoTemplate.findAndModify(query, update, Pack.class);
         }catch (Exception e){
