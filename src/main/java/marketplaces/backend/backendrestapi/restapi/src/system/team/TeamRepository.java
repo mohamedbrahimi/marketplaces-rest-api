@@ -1,4 +1,7 @@
 package marketplaces.backend.backendrestapi.restapi.src.system.team;
 
-public interface TeamRepository {
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface TeamRepository extends MongoRepository<Team, String> {
+
 }
