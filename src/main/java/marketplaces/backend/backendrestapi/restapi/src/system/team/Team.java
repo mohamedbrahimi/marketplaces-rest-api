@@ -2,6 +2,7 @@ package marketplaces.backend.backendrestapi.restapi.src.system.team;
 
 import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
 import marketplaces.backend.backendrestapi.config.global.auditing.Auditable;
+import marketplaces.backend.backendrestapi.restapi.src.system.pack.Pack;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -43,8 +44,8 @@ public class Team extends Auditable<String> {
     @Indexed(direction = IndexDirection.ASCENDING)
     private int isArchived = 0;
 
-    @DBRef(db = "packs")
-    private  String pack;
+    @DBRef
+    private Pack pack;
 
 
     public String getId() {
@@ -63,6 +64,14 @@ public class Team extends Auditable<String> {
         this.label = label;
     }
 
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
     public int getStatus() {
         return status;
     }
@@ -79,11 +88,11 @@ public class Team extends Auditable<String> {
         this.isArchived = isArchived;
     }
 
-    public String getPack() {
+    public Pack getPack() {
         return pack;
     }
 
-    public void setPack(String pack) {
+    public void setPack(Pack pack) {
         this.pack = pack;
     }
 }
