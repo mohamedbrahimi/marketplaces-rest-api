@@ -2,6 +2,7 @@ package marketplaces.backend.backendrestapi.restapi.src.system.user;
 
 import marketplaces.backend.backendrestapi.config.exceptions.constants.ExceptionMessages;
 import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestException;
+import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
 import marketplaces.backend.backendrestapi.config.global.GlobalService;
 import marketplaces.backend.backendrestapi.config.global.filtering.Filtering;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,9 +145,9 @@ public class UserService extends GlobalService<User, UserRepository> {
             update.set(User.STATUS_TEXT, 0);
             update.set(User.IS_ARCHIVED_TEXT, 1);
             String currentDate = (new Date()).toString();
-            update.set(User.USERNAME_TEXT, user.getUsername()+ "_ARCHIVED_"+ currentDate);
-            update.set(User.PHONE_TEXT, user.getPhone()+ "_ARCHIVED_"+ currentDate);
-            update.set(User.MAIL_TEXT, user.getMail()+ "_ARCHIVED_"+ currentDate);
+            update.set(User.USERNAME_TEXT, user.getUsername()+ GlobalConstants.DEFAULT_SUFFIX_OF_ARCHIVED_DOC+ currentDate);
+            update.set(User.PHONE_TEXT, user.getPhone()+ GlobalConstants.DEFAULT_SUFFIX_OF_ARCHIVED_DOC+ currentDate);
+            update.set(User.MAIL_TEXT, user.getMail()+ GlobalConstants.DEFAULT_SUFFIX_OF_ARCHIVED_DOC+ currentDate);
 
             update.set(User.LAST_MODIFIED_TEXT, new Date());
             update.set(User.LAST_MODIFIED_USER_TEXT, SecurityContextHolder.getContext().getAuthentication().getName());
