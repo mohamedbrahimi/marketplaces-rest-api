@@ -47,6 +47,7 @@ public class TeamService extends GlobalService<Team, TeamRepository> {
         query.fields().include(Team.CODE_TEXT);
         query.fields().include(Team.LABEL_TEXT);
         query.fields().include(Team.DESC_TEXT);
+        query.fields().include(Team.PACK_TEXT).include("desc");
         query.fields().include(Team.STATUS_TEXT);
 
         List<Team> list = mongoTemplate.find(query, Team.class);
@@ -139,7 +140,7 @@ public class TeamService extends GlobalService<Team, TeamRepository> {
             mongoTemplate.findAndModify(query, update, Team.class);
 
         }catch (Exception e){
-
+            this.UnknownException(e.getMessage());
         }
     }
 
