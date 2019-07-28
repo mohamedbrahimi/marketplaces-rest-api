@@ -21,7 +21,7 @@ public class Team extends Auditable<String> {
     static public String LABEL_TEXT = "label";
     static public String DESC_TEXT = "desc";
     static public String STATUS_TEXT = "status";
-    static public String PACK_TEXT = "status";
+    static public String PACK_TEXT = "pack";
     static public String IS_ARCHIVED_TEXT = "isArchived";
 
     @Id
@@ -45,6 +45,7 @@ public class Team extends Auditable<String> {
     private int isArchived = 0;
 
     @DBRef
+    @Pattern(message = "Id not valid", regexp = GlobalConstants.REGEXP_OBJECTID)
     private Pack pack;
 
 
