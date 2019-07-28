@@ -6,6 +6,8 @@ import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestEx
 import marketplaces.backend.backendrestapi.config.exceptions.unknown.ApiRequestUnknownException;
 import marketplaces.backend.backendrestapi.restapi.src.system.pack.Pack;
 import marketplaces.backend.backendrestapi.restapi.src.system.pack.PackRepository;
+import marketplaces.backend.backendrestapi.restapi.src.system.team.Team;
+import marketplaces.backend.backendrestapi.restapi.src.system.team.TeamRepository;
 import marketplaces.backend.backendrestapi.restapi.src.system.user.User;
 import marketplaces.backend.backendrestapi.restapi.src.system.user.UserRepository;
 
@@ -36,6 +38,7 @@ public class GlobalService<T, R> {
             }break;
             case "PACK": {
                 Pack pack = (Pack) doc;
+
                 if(pack.getId() != null && !pack.getId().matches(GlobalConstants.REGEXP_OBJECTID))
                     throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
                 if(forFields.contains(Pack.CODE_TEXT) && pack.getCode() == null)
@@ -44,6 +47,24 @@ public class GlobalService<T, R> {
                     throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
                 if(forFields.contains(Pack.DESC_TEXT) && pack.getDesc() == null)
                     throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
+
+            }break;
+            case "TEAM": {
+                Team team = (Team) doc;
+
+                if(team.getId() != null && !team.getId().matches(GlobalConstants.REGEXP_OBJECTID))
+                    throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
+                if(forFields.contains(Team.CODE_TEXT) && team.getCode() == null)
+                    throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
+                if(forFields.contains(Team.LABEL_TEXT) && team.getLabel() == null)
+                    throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
+                if(forFields.contains(Team.DESC_TEXT) && team.getDesc() == null)
+                    throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
+                if(forFields.contains(Team.PACK_TEXT) && team.getDesc() == null)
+                    throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
+                if(team.getPack().getId() != null && !team.getPack().getId().matches(GlobalConstants.REGEXP_OBJECTID))
+                    throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
+
             }break;
             default: break;
         }
@@ -56,9 +77,10 @@ public class GlobalService<T, R> {
                         document,
                         doc,
                         Arrays.asList(
-                                Pack.CODE_TEXT,
-                                Pack.LABEL_TEXT,
-                                Pack.DESC_TEXT
+                                User.USERNAME_TEXT,
+                                User.MAIL_TEXT,
+                                User.PHONE_TEXT,
+                                User.PASSWORD_TEXT
                         )
                 );
             }break;
@@ -67,12 +89,24 @@ public class GlobalService<T, R> {
                         document,
                         doc,
                         Arrays.asList(
-                                User.USERNAME_TEXT,
-                                User.MAIL_TEXT,
-                                User.PHONE_TEXT,
-                                User.PASSWORD_TEXT
+                                Pack.CODE_TEXT,
+                                Pack.LABEL_TEXT,
+                                Pack.DESC_TEXT
                         )
-        );
+
+                 );
+            }break;
+            case "TEAM": {
+                CheckIfValidDoc(
+                        document,
+                        doc,
+                        Arrays.asList(
+                                Team.CODE_TEXT,
+                                Team.LABEL_TEXT,
+                                Team.DESC_TEXT,
+                                Team.PACK_TEXT
+                        )
+                );
             }break;
             default: break;
         }
@@ -126,6 +160,21 @@ public class GlobalService<T, R> {
                 }else if(pack.getId() == null){
                     if(!Optional.empty().equals(packRepository.findByCode(pack.getCode())))
                         throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_PACK_CODE);
+                }else{
+                    throw new ApiRequestException(ExceptionMessages.ERROR_DOCUMENT_NOT_FOUND);
+                }
+            }break;
+            case "TEAM": {
+                Team team = (Team) doc;
+                TeamRepository teamRepository = (TeamRepository)repository;
+                Optional<Team> optionalTeam = team.getId() == null ? Optional.empty() : teamRepository.findById(team.getId());
+                if(!optionalTeam.equals(Optional.empty())){
+
+                    if(!optionalTeam.get().getCode().equals(team.getCode()) && !teamRepository.findByCode(team.getCode()).equals(Optional.empty()))
+                        throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_TEAM_CODE);
+                }else if(team.getId() == null){
+                    if(!Optional.empty().equals(teamRepository.findByCode(team.getCode())))
+                        throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_TEAM_CODE);
                 }else{
                     throw new ApiRequestException(ExceptionMessages.ERROR_DOCUMENT_NOT_FOUND);
                 }
