@@ -114,6 +114,15 @@ public final class ExceptionMessages {
             )
     );
 
+    public static final ApiExceptionMessage ERROR_EXISTING_TEAM_CODE = new ApiExceptionMessage(
+            ERROR_PEFIX.concat("ERROR_EXISTING_TEAM_CODE"),
+            new ApiMessageBody(
+                    "Veuillez changer ce code",
+                    "",
+                    "You need to change this code!"
+            )
+    );
+
 
 
     public static final ApiExceptionMessage ERROR_UNKNOWN_EXCEPTION = new ApiExceptionMessage(
