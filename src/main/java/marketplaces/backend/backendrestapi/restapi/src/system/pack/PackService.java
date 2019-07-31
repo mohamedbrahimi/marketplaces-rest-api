@@ -40,7 +40,8 @@ public class PackService extends GlobalService<Pack, PackRepository> {
                 Criteria.where(Pack.CODE_TEXT).regex(filtering.getText())
         );
         if( Arrays.asList(0, 1).contains(filtering.getStatus()) )
-            criteria.andOperator(Criteria.where(Pack.STATUS_TEXT).is(filtering.getStatus()));
+            criteria.and(Pack.STATUS_TEXT).is(filtering.getStatus());
+
         Query query = new Query(criteria).with(pageable);
         query.with(new Sort(Sort.Direction.DESC, "count"));
 
