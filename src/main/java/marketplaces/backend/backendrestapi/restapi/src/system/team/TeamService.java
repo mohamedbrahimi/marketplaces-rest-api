@@ -35,11 +35,14 @@ public class TeamService extends GlobalService<Team, TeamRepository> {
         Pageable pageable = PageRequest.of(filtering.getPage(), filtering.getSize());
 
         Criteria criteria = new Criteria();
-        criteria.andOperator(
-                Criteria.where(Team.CODE_TEXT).regex(filtering.getText())
+        criteria.orOperator(
+                Criteria.where(Team.CODE_TEXT).regex(filtering.getText()),
+                Criteria.where(Team.LABEL_TEXT).regex(filtering.getText()),
+                Criteria.where(Team.DESC_TEXT).regex(filtering.getText())
+
         );
         if(Arrays.asList(0, 1).contains(filtering.getStatus()))
-            criteria.andOperator(Criteria.where(Team.STATUS_TEXT)).is(filtering.getStatus());
+            criteria.and(Team.STATUS_TEXT).is(filtering.getStatus());
 
         Query query = new Query(criteria).with(pageable);
         query.with(new Sort(Sort.Direction.DESC, "count"));
