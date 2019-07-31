@@ -60,9 +60,9 @@ public class GlobalService<T, R> {
                     throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
                 if(forFields.contains(Team.DESC_TEXT) && team.getDesc() == null)
                     throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
-                if(forFields.contains(Team.PACK_TEXT) && team.getDesc() == null)
+                if(forFields.contains(Team.PACK_TEXT) && team.getPack() == null)
                     throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
-                if(team.getPack().getId() != null && !team.getPack().getId().matches(GlobalConstants.REGEXP_OBJECTID))
+                if(forFields.contains(Team.PACK_TEXT) && team.getPack() != null && team.getPack().getId() != null && !team.getPack().getId().matches(GlobalConstants.REGEXP_OBJECTID))
                     throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
 
             }break;
