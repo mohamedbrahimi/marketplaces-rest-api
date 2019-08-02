@@ -45,7 +45,6 @@ public class Team extends Auditable<String> {
     private int isArchived = 0;
 
     @DBRef
-    @Pattern(message = "Id not valid", regexp = GlobalConstants.REGEXP_OBJECTID)
     private Pack pack;
 
 
