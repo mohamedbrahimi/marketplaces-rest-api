@@ -17,6 +17,7 @@ import java.util.Optional;
 
 public class GlobalService<T, R> {
 
+
     public void CheckIfValidDoc(String document, T doc, List<String> forFields){
         switch (document) {
             case "USER": {
@@ -165,9 +166,17 @@ public class GlobalService<T, R> {
                 }
             }break;
             case "TEAM": {
+                /**
+                 * for referenced fields we need to check them from there collection
+                 * and check if
+                 * status: 1, not archived, ...
+                 * referenced field: 'pack'
+                 */
                 Team team = (Team) doc;
                 TeamRepository teamRepository = (TeamRepository)repository;
+
                 Optional<Team> optionalTeam = team.getId() == null ? Optional.empty() : teamRepository.findById(team.getId());
+                //Optional<Pack> optionalPack = .findById(team.getId());
                 if(!optionalTeam.equals(Optional.empty())){
 
                     if(!optionalTeam.get().getCode().equals(team.getCode()) && !teamRepository.findByCode(team.getCode()).equals(Optional.empty()))
