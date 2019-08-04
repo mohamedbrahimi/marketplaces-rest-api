@@ -5,6 +5,7 @@ import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestEx
 import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
 import marketplaces.backend.backendrestapi.config.global.GlobalService;
 import marketplaces.backend.backendrestapi.config.global.filtering.Filtering;
+import marketplaces.backend.backendrestapi.restapi.src.system.pack.PackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +31,8 @@ public class TeamService extends GlobalService<Team, TeamRepository> {
     MongoTemplate mongoTemplate;
     @Autowired
     TeamRepository teamRepository;
+    @Autowired
+    PackRepository packRepository;
 
     public Page<Team> find(Filtering filtering){
         Pageable pageable = PageRequest.of(filtering.getPage(), filtering.getSize());
@@ -63,6 +66,8 @@ public class TeamService extends GlobalService<Team, TeamRepository> {
 
 
     void insert(Team team){
+        this.CheckAdditionalCriteria(Team.DOC_TEXT, team, Arrays.asList(packRepository));
+
         try{
             mongoTemplate.insert(team);
         }catch (Exception e){
@@ -95,7 +100,10 @@ public class TeamService extends GlobalService<Team, TeamRepository> {
         this.CheckIfNewDoc(
                 Team.DOC_TEXT,
                 team,
-                teamRepository
+                teamRepository,
+                Arrays.asList(
+                        packRepository
+                )
         );
 
         try {
