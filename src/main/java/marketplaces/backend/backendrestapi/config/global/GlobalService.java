@@ -10,6 +10,8 @@ import marketplaces.backend.backendrestapi.restapi.src.system.team.Team;
 import marketplaces.backend.backendrestapi.restapi.src.system.team.TeamRepository;
 import marketplaces.backend.backendrestapi.restapi.src.system.user.User;
 import marketplaces.backend.backendrestapi.restapi.src.system.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +19,8 @@ import java.util.Optional;
 
 public class GlobalService<T, R> {
 
+    @Autowired
+    MongoTemplate mongoTemplate;
 
     public void CheckIfValidDoc(String document, T doc, List<String> forFields){
         switch (document) {
@@ -172,15 +176,24 @@ public class GlobalService<T, R> {
                  * status: 1, not archived, ...
                  * referenced field: 'pack'
                  */
+                System.out.println("TEAM");
                 Team team = (Team) doc;
                 TeamRepository teamRepository = (TeamRepository)repository;
 
                 Optional<Team> optionalTeam = team.getId() == null ? Optional.empty() : teamRepository.findById(team.getId());
-                //Optional<Pack> optionalPack = .findById(team.getId());
+
+                System.out.println(optionalTeam);
                 if(!optionalTeam.equals(Optional.empty())){
 
                     if(!optionalTeam.get().getCode().equals(team.getCode()) && !teamRepository.findByCode(team.getCode()).equals(Optional.empty()))
                         throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_TEAM_CODE);
+                    // Check pack
+                    System.out.println("PACK");
+
+                    Pack pack = mongoTemplate.findById(team.getPack().getId(), Pack.class);
+                    System.out.println(pack.getCode());
+                    System.out.println("PACK");
+
                 }else if(team.getId() == null){
                     if(!Optional.empty().equals(teamRepository.findByCode(team.getCode())))
                         throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_TEAM_CODE);
