@@ -19,9 +19,6 @@ import java.util.Optional;
 
 public class GlobalService<T, R> {
 
-    @Autowired
-    MongoTemplate mongoTemplate;
-
     public void CheckIfValidDoc(String document, T doc, List<String> forFields){
         switch (document) {
             case "USER": {
@@ -116,7 +113,7 @@ public class GlobalService<T, R> {
             default: break;
         }
     }
-    public void CheckIfNewDoc(String document,T doc, R repository){
+    public void CheckIfNewDoc(String document,T doc, R repository, List repositories){
 
         switch (document) {
             case "USER": {
@@ -176,23 +173,17 @@ public class GlobalService<T, R> {
                  * status: 1, not archived, ...
                  * referenced field: 'pack'
                  */
-                System.out.println("TEAM");
                 Team team = (Team) doc;
                 TeamRepository teamRepository = (TeamRepository)repository;
 
                 Optional<Team> optionalTeam = team.getId() == null ? Optional.empty() : teamRepository.findById(team.getId());
 
-                System.out.println(optionalTeam);
                 if(!optionalTeam.equals(Optional.empty())){
 
                     if(!optionalTeam.get().getCode().equals(team.getCode()) && !teamRepository.findByCode(team.getCode()).equals(Optional.empty()))
                         throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_TEAM_CODE);
-                    // Check pack
-                    System.out.println("PACK");
 
-                    Pack pack = mongoTemplate.findById(team.getPack().getId(), Pack.class);
-                    System.out.println(pack.getCode());
-                    System.out.println("PACK");
+                    this.CheckAdditionalCriteria(document, doc, repositories);
 
                 }else if(team.getId() == null){
                     if(!Optional.empty().equals(teamRepository.findByCode(team.getCode())))
@@ -206,6 +197,23 @@ public class GlobalService<T, R> {
 
     }
 
+    public void CheckIfNewDoc(String document,T doc, R repository){
+        CheckIfNewDoc(document, doc, repository, null);
+    }
+
+    public void CheckAdditionalCriteria(String document,T doc,
+                                        List repositories){
+        switch (document){
+            case "TEAM": {
+                PackRepository packRepository = (PackRepository) repositories.get(0);
+                Team team = (Team) doc;
+                Optional<Pack> pack = (team == null || team.getPack() == null || team.getPack().getId() == null ) ? Optional.empty() : packRepository.findById(team.getPack().getId());
+
+                if (Optional.empty().equals(pack) || pack.get().getStatus() == 0 || pack.get().getIsArchived() == 1)
+                    throw new ApiRequestException(ExceptionMessages.ERROR_PACK_TO_TEAM);
+            }
+        }
+    }
     public void UnknownException(String message) {
         ApiExceptionMessage e = ExceptionMessages.ERROR_UNKNOWN_EXCEPTION;
         e.setAdditionalMessage(message);
