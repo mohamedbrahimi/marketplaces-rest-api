@@ -106,7 +106,7 @@ public final class ExceptionMessages {
     );
 
     public static final ApiExceptionMessage ERROR_EXISTING_PACK_CODE = new ApiExceptionMessage(
-            ERROR_PEFIX.concat("ERROR_EXISTING_PACK_CODE"),
+            ERROR_PEFIX.concat("EXISTING_PACK_CODE"),
             new ApiMessageBody(
                     "Veuillez changer ce code",
                     "",
@@ -115,7 +115,7 @@ public final class ExceptionMessages {
     );
 
     public static final ApiExceptionMessage ERROR_EXISTING_TEAM_CODE = new ApiExceptionMessage(
-            ERROR_PEFIX.concat("ERROR_EXISTING_TEAM_CODE"),
+            ERROR_PEFIX.concat("EXISTING_TEAM_CODE"),
             new ApiMessageBody(
                     "Veuillez changer ce code",
                     "",
@@ -124,7 +124,7 @@ public final class ExceptionMessages {
     );
 
     public static final ApiExceptionMessage ERROR_PACK_TO_TEAM = new ApiExceptionMessage(
-            ERROR_PEFIX.concat("ERROR_PACK_TO_TEAM"),
+            ERROR_PEFIX.concat("PACK_TO_TEAM"),
             new ApiMessageBody(
                     "Vous ne pouvez pas choisir ce pack!",
                     "",
