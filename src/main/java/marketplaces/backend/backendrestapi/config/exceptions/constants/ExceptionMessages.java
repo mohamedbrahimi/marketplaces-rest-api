@@ -123,7 +123,14 @@ public final class ExceptionMessages {
             )
     );
 
-
+    public static final ApiExceptionMessage ERROR_PACK_TO_TEAM = new ApiExceptionMessage(
+            ERROR_PEFIX.concat("ERROR_PACK_TO_TEAM"),
+            new ApiMessageBody(
+                    "Vous ne pouvez pas choisir ce pack!",
+                    "",
+                    "You can't choose this pack!"
+            )
+    );
 
     public static final ApiExceptionMessage ERROR_UNKNOWN_EXCEPTION = new ApiExceptionMessage(
             ERROR_PEFIX.concat("UNKNOWN_EXCEPTION"),
