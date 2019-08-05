@@ -170,7 +170,7 @@ public class GlobalService<T, R> {
                 /**
                  * for referenced fields we need to check them from there collection
                  * and check if
-                 * status: 1, not archived, ...
+                 * status: 1 and not archived, ...
                  * referenced field: 'pack'
                  */
                 Team team = (Team) doc;
@@ -182,7 +182,7 @@ public class GlobalService<T, R> {
 
                     if(!optionalTeam.get().getCode().equals(team.getCode()) && !teamRepository.findByCode(team.getCode()).equals(Optional.empty()))
                         throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_TEAM_CODE);
-
+                    // ****
                     this.CheckAdditionalCriteria(document, doc, repositories);
 
                 }else if(team.getId() == null){
