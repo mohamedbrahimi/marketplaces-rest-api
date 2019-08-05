@@ -66,7 +66,7 @@ public class UserService extends GlobalService<User, UserRepository> {
 
     void insert(User user){
         try {
-            user = this.encodePasseord(user);
+            user = this.encodePassword(user);
             mongoTemplate.insert(user);
         } catch (Exception e) {
             this.CheckIfValidDoc(
@@ -84,7 +84,7 @@ public class UserService extends GlobalService<User, UserRepository> {
 
     void update(User user){
         // need to perform this function.
-        user = this.encodePasseord(user);
+        user = this.encodePassword(user);
         this.CheckIfValidDoc(
                 User.DOC_TEXT,
                 user,
@@ -159,7 +159,7 @@ public class UserService extends GlobalService<User, UserRepository> {
     }
 
 
-    public User encodePasseord(User user) {
+    public User encodePassword(User user) {
         // a lot lines of codes to test if we need to encode the password
         // Need to minimize this by mongo hooks
 
