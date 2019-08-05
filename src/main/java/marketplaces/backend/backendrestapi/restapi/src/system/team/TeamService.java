@@ -71,7 +71,6 @@ public class TeamService extends GlobalService<Team, TeamRepository> {
         try{
             mongoTemplate.insert(team);
         }catch (Exception e){
-            System.out.println(e);
             this.CheckIfValidDoc(
                     Team.DOC_TEXT,
                     team
@@ -80,8 +79,12 @@ public class TeamService extends GlobalService<Team, TeamRepository> {
             this.CheckIfNewDoc(
                     Team.DOC_TEXT,
                     team,
-                    teamRepository
+                    teamRepository,
+                    Arrays.asList(packRepository)
             );
+
+            this.UnknownException(e.getMessage());
+
         }
     }
 
