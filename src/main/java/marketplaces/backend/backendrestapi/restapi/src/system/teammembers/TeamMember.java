@@ -1,22 +1,22 @@
-package marketplaces.backend.backendrestapi.restapi.src.system.teamgroup;
+package marketplaces.backend.backendrestapi.restapi.src.system.teammembers;
 
 import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
+import marketplaces.backend.backendrestapi.config.global.auditing.Auditable;
+import marketplaces.backend.backendrestapi.restapi.src.system.user.User;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Reference;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @Document(collection = "teamGroups")
-public class TeamGroup {
+public class TeamMember extends Auditable<String> {
 
     @Id
     @Pattern(message = "Id not valid", regexp = GlobalConstants.REGEXP_OBJECTID)
@@ -25,7 +25,8 @@ public class TeamGroup {
     @Pattern(message = "Id not valid", regexp = GlobalConstants.REGEXP_OBJECTID)
     @NotNull(message = "userId must be not null !!")
     @Indexed(direction = IndexDirection.ASCENDING)
-    private String userId;
+    @DBRef
+    private User user;
 
     @Indexed(direction = IndexDirection.ASCENDING)
     private int status = 1;
@@ -38,12 +39,12 @@ public class TeamGroup {
         return id;
     }
 
-    public String getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public int getStatus() {
