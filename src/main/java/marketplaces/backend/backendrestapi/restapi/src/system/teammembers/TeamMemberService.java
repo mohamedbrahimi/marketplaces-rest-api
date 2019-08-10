@@ -1,5 +1,8 @@
 package marketplaces.backend.backendrestapi.restapi.src.system.teammembers;
 
+import marketplaces.backend.backendrestapi.config.exceptions.constants.ExceptionMessages;
+import marketplaces.backend.backendrestapi.config.exceptions.custom.ApiRequestException;
+import marketplaces.backend.backendrestapi.config.global.GlobalConstants;
 import marketplaces.backend.backendrestapi.config.global.GlobalService;
 import marketplaces.backend.backendrestapi.config.global.filtering.Filtering;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TeamMemberService extends GlobalService<TeamMember, TeamMemberRepository> {
@@ -101,6 +105,18 @@ public class TeamMemberService extends GlobalService<TeamMember, TeamMemberRepos
             this.UnknownException(e.getMessage());
         }
     }
+
+
+    void delete(String id){
+
+        try {
+            teamMemberRepository.deleteById(id);
+        }catch (Exception e){
+            this.UnknownException(e.getMessage());
+        }
+    }
+
+
 
 
 }
