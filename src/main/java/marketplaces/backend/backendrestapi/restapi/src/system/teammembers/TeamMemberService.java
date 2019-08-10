@@ -10,10 +10,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -60,6 +63,41 @@ public class TeamMemberService extends GlobalService<TeamMember, TeamMemberRepos
                     teamMember,
                     teamMemberRepository
             );
+            this.UnknownException(e.getMessage());
+        }
+    }
+
+    void update(TeamMember teamMember){
+        this.CheckIfValidDoc(
+                TeamMember.DOC_TEXT,
+                teamMember,
+                Arrays.asList(
+                        (teamMember.getTeam() == null) ? "": TeamMember.TEAM_TEXT,
+                        (teamMember.getMember() == null) ? "": TeamMember.MEMBER_TEXT
+                )
+        );
+        this.CheckIfNewDoc(
+                TeamMember.DOC_TEXT,
+                teamMember,
+                teamMemberRepository
+        );
+        try{
+            Query query = new Query();
+            query.addCriteria(Criteria.where("id").is(teamMember.getId()));
+            Update update = new Update();
+
+            if(teamMember.getTeam() != null) update.set(TeamMember.TEAM_TEXT, teamMember.getTeam());
+            if(teamMember.getMember() != null) update.set(TeamMember.MEMBER_TEXT, teamMember.getMember());
+            if(Arrays.asList(0, 1).contains(teamMember.getStatus())) update.set(TeamMember.STATUS_TEXT, teamMember.getStatus());
+
+            // TRY TO DO AUDITING SYSTEM ( THIS WORK NEED TO BE AUTOMATICALLY )
+
+            update.set(TeamMember.LAST_MODIFIED_TEXT, new Date());
+            update.set(TeamMember.LAST_MODIFIED_USER_TEXT, SecurityContextHolder.getContext().getAuthentication().getName());
+
+            mongoTemplate.findAndModify(query, update, TeamMember.class);
+
+        }catch (Exception e){
             this.UnknownException(e.getMessage());
         }
     }
