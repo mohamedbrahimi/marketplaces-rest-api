@@ -27,7 +27,7 @@ public class TeamMemberService extends GlobalService<TeamMember, TeamMemberRepos
     public Page<TeamMember> find(Filtering filtering){
         Pageable pageable = PageRequest.of(filtering.getPage(), filtering.getSize());
         Criteria criteria = new Criteria();
-        
+
         if( Arrays.asList(0, 1).contains(filtering.getStatus()) )
             criteria.and(TeamMember.STATUS_TEXT).is(filtering.getStatus());
 
@@ -45,4 +45,24 @@ public class TeamMemberService extends GlobalService<TeamMember, TeamMemberRepos
                 ()-> mongoTemplate.count(query, TeamMember.class)
         );
     }
+
+    void insert(TeamMember teamMember){
+        try{
+            mongoTemplate.insert(teamMember);
+        }catch (Exception e){
+
+            this.CheckIfValidDoc(
+                    TeamMember.DOC_TEXT,
+                    teamMember
+            );
+            this.CheckIfNewDoc(
+                    TeamMember.DOC_TEXT,
+                    teamMember,
+                    teamMemberRepository
+            );
+            this.UnknownException(e.getMessage());
+        }
+    }
+
+
 }
