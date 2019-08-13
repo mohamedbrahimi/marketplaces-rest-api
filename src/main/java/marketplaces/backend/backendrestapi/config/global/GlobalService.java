@@ -8,10 +8,10 @@ import marketplaces.backend.backendrestapi.restapi.src.system.pack.Pack;
 import marketplaces.backend.backendrestapi.restapi.src.system.pack.PackRepository;
 import marketplaces.backend.backendrestapi.restapi.src.system.team.Team;
 import marketplaces.backend.backendrestapi.restapi.src.system.team.TeamRepository;
+import marketplaces.backend.backendrestapi.restapi.src.system.teammembers.TeamMember;
+import marketplaces.backend.backendrestapi.restapi.src.system.teammembers.TeamMemberRepository;
 import marketplaces.backend.backendrestapi.restapi.src.system.user.User;
 import marketplaces.backend.backendrestapi.restapi.src.system.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -64,9 +64,22 @@ public class GlobalService<T, R> {
                     throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
                 if(forFields.contains(Team.PACK_TEXT) && team.getPack() == null)
                     throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
-                if(forFields.contains(Team.PACK_TEXT) && team.getPack() != null && team.getPack().getId() != null && !team.getPack().getId().matches(GlobalConstants.REGEXP_OBJECTID))
+                if(forFields.contains(Team.PACK_TEXT) && team.getPack() != null && (team.getPack().getId() == null || (team.getPack().getId() != null && !team.getPack().getId().matches(GlobalConstants.REGEXP_OBJECTID))))
                     throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
 
+            }break;
+            case "TEAM_MEMBERS": {
+                TeamMember teamMember = (TeamMember) doc;
+                if(teamMember.getId() != null && !teamMember.getId().matches(GlobalConstants.REGEXP_OBJECTID))
+                    throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
+                if(forFields.contains(TeamMember.TEAM_TEXT) && teamMember.getTeam() == null)
+                    throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
+                if(forFields.contains(TeamMember.TEAM_TEXT) && teamMember.getTeam() != null && (teamMember.getTeam().getId() == null || (teamMember.getTeam().getId() != null && !teamMember.getTeam().getId().matches(GlobalConstants.REGEXP_OBJECTID))))
+                    throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
+                if(forFields.contains(TeamMember.MEMBER_TEXT) && teamMember.getMember() == null)
+                    throw new ApiRequestException(ExceptionMessages.ERROR_FIELD_NULL);
+                if(forFields.contains(TeamMember.MEMBER_TEXT) && teamMember.getMember() != null && (teamMember.getMember().getId() == null || (teamMember.getMember().getId() != null && !teamMember.getMember().getId().matches(GlobalConstants.REGEXP_OBJECTID))))
+                    throw new ApiRequestException(ExceptionMessages.ERROR_OBJECT_ID_NOT_VALID);
             }break;
             default: break;
         }
@@ -110,6 +123,16 @@ public class GlobalService<T, R> {
                         )
                 );
             }break;
+            case "TEAM_MEMBERS": {
+                CheckIfValidDoc(
+                        document,
+                        doc,
+                        Arrays.asList(
+                                TeamMember.TEAM_TEXT,
+                                TeamMember.MEMBER_TEXT
+                        )
+                );
+            }
             default: break;
         }
     }
@@ -141,7 +164,6 @@ public class GlobalService<T, R> {
                     if (!userRepository.findByMail(user.getMail()).equals(Optional.empty())) {
                         throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MAIL);
                     }
-
 
                     if (!userRepository.findByPhone(user.getPhone()).equals(Optional.empty())) {
                         throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_PHONE);
@@ -192,6 +214,26 @@ public class GlobalService<T, R> {
                     throw new ApiRequestException(ExceptionMessages.ERROR_DOCUMENT_NOT_FOUND);
                 }
             }break;
+            case "TEAM_MEMBERS" : {
+                TeamMember teamMember = (TeamMember) doc;
+                TeamMemberRepository teamMemberRepository = (TeamMemberRepository) repository;
+
+                Optional<TeamMember> optionalTeamMember = teamMember.getId() == null ? Optional.empty() : teamMemberRepository.findById(teamMember.getId());
+
+                if (!optionalTeamMember.equals(Optional.empty())){
+                    if (!teamMemberRepository.findByTeamAndMember(teamMember.getTeam(), teamMember.getMember()).equals(Optional.empty()))
+                        throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MEMBER_IN_TEAM);
+                    // ***
+                    this.CheckAdditionalCriteria(document, doc, repositories);
+                }else if (teamMember.getId() == null){
+                    if (!Optional.empty().equals(teamMemberRepository.findByTeamAndMember(teamMember.getTeam(), teamMember.getMember()))){
+                        throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MEMBER_IN_TEAM);
+                    }
+                }else{
+                    throw new ApiRequestException(ExceptionMessages.ERROR_DOCUMENT_NOT_FOUND);
+                }
+
+            }break;
             default: break;
         }
 
@@ -211,7 +253,22 @@ public class GlobalService<T, R> {
 
                 if (Optional.empty().equals(pack) || pack.get().getStatus() == 0 || pack.get().getIsArchived() == 1)
                     throw new ApiRequestException(ExceptionMessages.ERROR_PACK_TO_TEAM);
-            }
+            }break;
+            case "TEAM_MEMBERS": {
+                TeamRepository teamRepository = (TeamRepository) repositories.get(0);
+                UserRepository userRepository = (UserRepository) repositories.get(1);
+                TeamMember teamMember = (TeamMember) doc;
+
+                Optional<Team> team = (teamMember == null || teamMember.getTeam() == null || teamMember.getTeam().getId() == null ) ? Optional.empty() : teamRepository.findById(teamMember.getTeam().getId());
+
+                if (Optional.empty().equals(team) || team.get().getStatus() == 0 || team.get().getIsArchived() == 1)
+                    throw new ApiRequestException(ExceptionMessages.ERROR_USER_TO_TEAM);
+
+                Optional<User> member = (teamMember == null || teamMember.getMember() == null || teamMember.getMember().getId() == null ) ? Optional.empty() : userRepository.findById(teamMember.getMember().getId());
+
+                if (Optional.empty().equals(team) || member.get().getStatus() == 0 || member.get().getIsArchived() == 1)
+                    throw new ApiRequestException(ExceptionMessages.ERROR_USER_TO_TEAM);
+            }break;
         }
     }
     public void UnknownException(String message) {
