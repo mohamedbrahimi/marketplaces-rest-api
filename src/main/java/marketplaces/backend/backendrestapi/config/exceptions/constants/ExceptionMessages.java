@@ -132,6 +132,24 @@ public final class ExceptionMessages {
             )
     );
 
+    public static final ApiExceptionMessage ERROR_EXISTING_MEMBER_IN_TEAM = new ApiExceptionMessage(
+            ERROR_PEFIX.concat("EXISTING_MEMBER_IN_TEAM"),
+            new ApiMessageBody(
+                    "Cet user est déjà dans ce groupe!",
+                    "",
+                    "This is already in this team!"
+            )
+    );
+
+    public static final ApiExceptionMessage ERROR_USER_TO_TEAM = new ApiExceptionMessage(
+            ERROR_PEFIX.concat("USER_TO_TEAM"),
+            new ApiMessageBody(
+                    "Erreur pandant l'affectation user to team",
+                    "",
+                    "Error when you try to place user to team"
+            )
+    );
+
     public static final ApiExceptionMessage ERROR_UNKNOWN_EXCEPTION = new ApiExceptionMessage(
             ERROR_PEFIX.concat("UNKNOWN_EXCEPTION"),
             new ApiMessageBody(
