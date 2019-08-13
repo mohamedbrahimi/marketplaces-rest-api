@@ -23,7 +23,7 @@ import java.util.List;
         // be careful if you want to update this compound index.
         //
         @CompoundIndex(
-                       name = "user_team_idx",
+                       name = "member_team_idx",
                        unique = true,
                        def = "{'member': 1, 'team': 1}")
 })

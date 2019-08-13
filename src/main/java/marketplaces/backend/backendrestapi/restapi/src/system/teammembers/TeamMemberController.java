@@ -1,6 +1,8 @@
 package marketplaces.backend.backendrestapi.restapi.src.system.teammembers;
 
+import marketplaces.backend.backendrestapi.config.global.filtering.Filtering;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,10 +14,15 @@ public class TeamMemberController {
 
     @Autowired
     private TeamMemberRepository teamMemberRepository;
+    @Autowired
+    private TeamMemberService teamMemberService;
 
     @GetMapping
-    public List<TeamMember> getTeamMembers(){
-        return teamMemberRepository.findAll();
+    public Page<TeamMember> getTeamMembers(@RequestHeader int size,
+                                           @RequestHeader int page,
+                                           @RequestHeader String text,
+                                           @RequestHeader int status){
+        return teamMemberService.find(new Filtering(size, page, text, status));
     }
 
     @GetMapping("/{id}")
@@ -25,12 +32,12 @@ public class TeamMemberController {
 
     @PostMapping
     public void insert(@RequestBody TeamMember teamMember){
-        teamMemberRepository.insert(teamMember);
+        teamMemberService.insert(teamMember);
     }
 
     @PutMapping
     public void update(@RequestBody TeamMember teamMember){
-        teamMemberRepository.save(teamMember);
+        teamMemberService.update(teamMember);
     }
 
     @DeleteMapping
