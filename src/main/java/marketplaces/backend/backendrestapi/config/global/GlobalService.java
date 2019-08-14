@@ -12,6 +12,10 @@ import marketplaces.backend.backendrestapi.restapi.src.system.teammembers.TeamMe
 import marketplaces.backend.backendrestapi.restapi.src.system.teammembers.TeamMemberRepository;
 import marketplaces.backend.backendrestapi.restapi.src.system.user.User;
 import marketplaces.backend.backendrestapi.restapi.src.system.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +23,8 @@ import java.util.Optional;
 
 public class GlobalService<T, R> {
 
+    @Autowired
+    MongoTemplate mongoTemplate;
     public void CheckIfValidDoc(String document, T doc, List<String> forFields){
         switch (document) {
             case "USER": {
@@ -218,15 +224,23 @@ public class GlobalService<T, R> {
                 TeamMember teamMember = (TeamMember) doc;
                 TeamMemberRepository teamMemberRepository = (TeamMemberRepository) repository;
 
-                Optional<TeamMember> optionalTeamMember = teamMember.getId() == null ? Optional.empty() : teamMemberRepository.findById(teamMember.getId());
+                Criteria criteria = new Criteria();
+                criteria.andOperator(
+                        Criteria.where(TeamMember.TEAM_TEXT+"."+GlobalConstants.DEFAULT_DOC_ID).is(teamMember.getTeam().getId()),
+                        Criteria.where(TeamMember.MEMBER_TEXT+"."+GlobalConstants.DEFAULT_DOC_ID).is(teamMember.getMember().getId())
+                );
+                Query query = new Query(criteria);
 
+
+                Optional<TeamMember> optionalTeamMember = teamMember.getId() == null ? Optional.empty() : teamMemberRepository.findById(teamMember.getId());
                 if (!optionalTeamMember.equals(Optional.empty())){
-                    if (!teamMemberRepository.findByTeamAndMember(teamMember.getTeam(), teamMember.getMember()).equals(Optional.empty()))
+                    if (mongoTemplate.findOne(query, TeamMember.class).getId() != null)
                         throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MEMBER_IN_TEAM);
                     // ***
                     this.CheckAdditionalCriteria(document, doc, repositories);
                 }else if (teamMember.getId() == null){
-                    if (!Optional.empty().equals(teamMemberRepository.findByTeamAndMember(teamMember.getTeam(), teamMember.getMember()))){
+
+                    if (mongoTemplate.findOne(query, TeamMember.class).getId() != null){
                         throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MEMBER_IN_TEAM);
                     }
                 }else{
@@ -266,7 +280,7 @@ public class GlobalService<T, R> {
 
                 Optional<User> member = (teamMember == null || teamMember.getMember() == null || teamMember.getMember().getId() == null ) ? Optional.empty() : userRepository.findById(teamMember.getMember().getId());
 
-                if (Optional.empty().equals(team) || member.get().getStatus() == 0 || member.get().getIsArchived() == 1)
+                if (Optional.empty().equals(member) || member.get().getStatus() == 0 || member.get().getIsArchived() == 1)
                     throw new ApiRequestException(ExceptionMessages.ERROR_USER_TO_TEAM);
             }break;
         }

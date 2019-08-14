@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface TeamMemberRepository extends MongoRepository<TeamMember, String> {
 
-    @Query("{'team': ?0, 'member': ?0}")
-    Optional<TeamMember> findByTeamAndMember(Team team, User member);
+    @Query("{'team.id': ?0, 'member.id': ?0}")
+    Optional<TeamMember> findByTeamIdAndMemberId(String teamId, String memberId);
 }

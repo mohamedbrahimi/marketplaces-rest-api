@@ -146,7 +146,7 @@ public final class ExceptionMessages {
             new ApiMessageBody(
                     "Erreur pandant l'affectation user to team",
                     "",
-                    "Error when you try to place user to team"
+                    "Error when you try to add user to team"
             )
     );
 

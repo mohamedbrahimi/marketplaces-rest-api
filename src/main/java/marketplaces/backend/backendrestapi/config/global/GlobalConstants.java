@@ -9,6 +9,7 @@ public final class GlobalConstants {
     public static final String DEFAULT_VALUE_OF_USER_PASSWORD = "@@REST@@";
 
     public static final String DEFAULT_SUFFIX_OF_ARCHIVED_DOC = "_ARCHIVED_";
+    public static final String DEFAULT_DOC_ID = "_id";
 
 
 }
