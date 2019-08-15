@@ -234,13 +234,13 @@ public class GlobalService<T, R> {
 
                 Optional<TeamMember> optionalTeamMember = teamMember.getId() == null ? Optional.empty() : teamMemberRepository.findById(teamMember.getId());
                 if (!optionalTeamMember.equals(Optional.empty())){
-                    if (mongoTemplate.findOne(query, TeamMember.class).getId() != null)
+                    if (mongoTemplate.findOne(query, TeamMember.class) != null)
                         throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MEMBER_IN_TEAM);
                     // ***
                     this.CheckAdditionalCriteria(document, doc, repositories);
                 }else if (teamMember.getId() == null){
 
-                    if (mongoTemplate.findOne(query, TeamMember.class).getId() != null){
+                    if (mongoTemplate.findOne(query, TeamMember.class) != null){
                         throw new ApiRequestException(ExceptionMessages.ERROR_EXISTING_MEMBER_IN_TEAM);
                     }
                 }else{
@@ -269,6 +269,10 @@ public class GlobalService<T, R> {
                     throw new ApiRequestException(ExceptionMessages.ERROR_PACK_TO_TEAM);
             }break;
             case "TEAM_MEMBERS": {
+                System.out.println(repositories);
+                if (repositories == null || repositories.size() < 2)
+                    this.UnknownException("request not allowed!");
+
                 TeamRepository teamRepository = (TeamRepository) repositories.get(0);
                 UserRepository userRepository = (UserRepository) repositories.get(1);
                 TeamMember teamMember = (TeamMember) doc;
