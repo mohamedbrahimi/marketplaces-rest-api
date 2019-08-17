@@ -93,7 +93,11 @@ public class TeamMemberService extends GlobalService<TeamMember, TeamMemberRepos
         this.CheckIfNewDoc(
                 TeamMember.DOC_TEXT,
                 teamMember,
-                teamMemberRepository
+                teamMemberRepository,
+                Arrays.asList(
+                        teamRepository,
+                        userRepository
+                )
         );
         try{
             Query query = new Query();

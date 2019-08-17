@@ -79,8 +79,7 @@ public class TeamService extends GlobalService<Team, TeamRepository> {
             this.CheckIfNewDoc(
                     Team.DOC_TEXT,
                     team,
-                    teamRepository,
-                    Arrays.asList(packRepository)
+                    teamRepository
             );
 
             this.UnknownException(e.getMessage());
